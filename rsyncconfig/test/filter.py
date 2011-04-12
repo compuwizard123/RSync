@@ -105,18 +105,19 @@ class TestFileRule(unittest.TestCase):
             ('/foo/***', 'foo', self.file_stat, False),
         ])
 
+    @unittest.skip("TODO: Test [a-z]")
     def test_char_class(self):
-        self.assert_(False)
-        pass # TODO: Test [a-z]
+        pass
 
+    @unittest.skip("TODO: Test [[:alpha:]]")
     def test_local_char_class(self):
-        self.assert_(False)
-        pass # TODO: Test [[:alpha:]]
+        pass
 
+    @unittest.skip("Test ?")
     def test_wildchar(self):
-        self.assert_(False)
-        pass # TODO: Test ?
-    
+        pass
+
+    @unittest.skip("TODO: Test this")    
     def test_escaped_specials(self):
         '''
         Patterns match differently based on whether or not wildcard characters
@@ -125,7 +126,6 @@ class TestFileRule(unittest.TestCase):
         Otherwise escaped wildcards match as the escaped character and
         unescaped wildcards match as wildcards, as tested above.
         '''
-        self.assert_(False)
-        pass # TODO: Test this
+        pass
 
 suite = unittest.TestLoader().loadTestsFromTestCase(TestFileRule)
