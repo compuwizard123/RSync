@@ -5,10 +5,11 @@ from . import filter
 
 loader = unittest.TestLoader()
 
-suite = unittest.TestSuite([
-    loader.loadTestsFromTestCase(filter.TestFileRule),
-    doctest.DocTestSuite('rsyncconfig.filter')
-])
+def get_suite():
+    return unittest.TestSuite([
+        filter.get_suite(),
+        doctest.DocTestSuite('rsyncconfig.filter')
+    ])
 
 if __name__ == '__main__':
-    unittest.TextTestRunner().run(suite)
+    unittest.TextTestRunner().run(get_suite())
