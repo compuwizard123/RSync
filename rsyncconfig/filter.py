@@ -1,6 +1,11 @@
+import re
+import fnmatch
+import os
+from stat import *
+
 class FilterRule(object):
     def __init__(self, pattern):
-        pass
+        self.exp = pattern
 
     def match(self, path, stat):
         '''
@@ -31,7 +36,21 @@ class FilterRule(object):
         >>> FilterRule('[[:alpha:]]').match('z', file_stat)
         True
         '''
-        pass
+        exp = self.exp
+        if exp[0] == "/":
+            exp = exp.replace("/","^",1)
+
+        if exp.endswith("/") and not(S_ISDIR(stat.st_mode)):
+            return False
+        else:
+            exp = exp.rstrip("/")
+
+        exp = exp.replace("/***","(?:/.*)?").replace("**",".*").replace("?","[^/]").replace("*.","[^/]*\.")
+        regex = re.compile(exp)
+        if regex.search(path):
+            return True
+        else:
+            return False
 
 class ExcludeFilter(FilterRule):
     pass
