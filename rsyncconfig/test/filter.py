@@ -131,7 +131,7 @@ def add_tests(suite):
 
     suite.add_test_table(
         ('foo/?', 'foo/b', None, True),
-        ('foo/b?', 'foo/ba', DIR_STAT, True),
+        ('foo/b?', 'foo/ba', None, True),
         ('foo/b?a', 'foo/b/a', None, False),
     )
 
