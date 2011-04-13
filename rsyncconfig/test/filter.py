@@ -136,7 +136,7 @@ def add_tests(suite):
         ('[[:digit:]]', '9', None, True),
         ('[[:graph:]]', '*', None, True),
         ('[[:lower:]]', 'a', None, True),
-        ('[[:lower:]]', 'B', None, True),
+        ('[[:lower:]]', 'B', None, False),
         ('[[:print:]]', '&', None, True),
         ('[[:punct:]]', '(', None, True),
         ('[[:space:]]', '\v', None, True),
