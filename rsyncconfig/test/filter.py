@@ -130,9 +130,9 @@ def add_tests(suite):
     # Test ?
 
     suite.add_test_table(
-        ('foo/?', 'foo/bar', None, True),
-        ('foo/?', 'foo/bar/', DIR_STAT, False),
-        ('foo/?', 'foo/bar/a', None, False),
+        ('foo/?', 'foo/b', None, True),
+        ('foo/b?', 'foo/ba', DIR_STAT, False),
+        ('foo/b?a', 'foo/b/a', None, False),
     )
 
     # Patterns match differently based on whether or not wildcard characters
