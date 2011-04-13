@@ -114,11 +114,26 @@ def add_tests(suite):
         ('/foo/***', 'foo', FILE_STAT, False),
     )
 
-    # TODO: Test [a-z]
+    # Test [a-z]
+
+    suite.add_test_table(
+        ('foo/*.[ch]', 'foo/bar.c', FILE_STAT, True),
+        ('foo/*.[ch]', 'foo/bar.a', FILE_STAT, False),
+        ('foo/*.[ch]', 'foo/bar.ch', FILE_STAT, False),
+        ('foo/*.p[sy]', 'foo/bar.ps', FILE_STAT, True),
+        ('foo/[a-z]/*', 'foo/q/bar', None, True),
+        ('foo/[a-z]/*', 'foo/ab/bar', None, False),
+    )
 
     # TODO: Test [[:alpha:]]
 
-    # TODO: Test ?
+    # Test ?
+
+    suite.add_test_table(
+        ('foo/?', 'foo/bar', None, True),
+        ('foo/?', 'foo/bar/', DIR_STAT, False),
+        ('foo/?', 'foo/bar/a', None, False),
+    )
 
     # Patterns match differently based on whether or not wildcard characters
     # are present.  If they are not present (or, presumably, are all escaped,
