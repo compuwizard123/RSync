@@ -125,7 +125,28 @@ def add_tests(suite):
         ('foo/[a-z]/*', 'foo/ab/bar', None, False),
     )
 
-    # TODO: Test [[:alpha:]]
+    # Test [[:alpha:]]
+    suite.add_test_table(
+        ('[[:alnum:]]', '1', None, True),
+        ('[[:alpha:]]', 'q', None, True),
+        ('[[:ascii:]]', '\n', None, True),
+        ('[[:blank:]]', ' ', None, True),
+        ('[[:blank:]]', '\t', None, True),
+        ('[[:cntrl:]]', '\t', None, True),
+        ('[[:digit:]]', '9', None, True),
+        ('[[:graph:]]', '*', None, True),
+        ('[[:lower:]]', 'a', None, True),
+        ('[[:lower:]]', 'B', None, True),
+        ('[[:print:]]', '&', None, True),
+        ('[[:punct:]]', '(', None, True),
+        ('[[:space:]]', '\v', None, True),
+        ('[[:upper:]]', 'j', None, False),
+        ('[[:upper:]]', 'J', None, True),
+        ('[[:word:]]/[[:word:]]/[[:word:]]', 'a/_/3', None, True),
+        ('[[:xdigit:]]/[[:xdigit:]]/[[:xdigit:]]', '0/a/f', None, True),
+    )
+    # TODO: Add more cases that shouldn't match
+    # TODO: Add Unicode test cases
 
     # Test ?
 
