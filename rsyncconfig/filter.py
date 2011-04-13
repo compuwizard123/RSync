@@ -1,4 +1,4 @@
-import re
+import regex
 import fnmatch
 import os
 from stat import *
@@ -46,8 +46,8 @@ class FilterRule(object):
             exp = exp.rstrip("/")
 
         exp = exp.replace("/***","(?:/.*)?").replace("**",".*").replace("?","[^/]").replace("*.","[^/]*\.")
-        regex = re.compile(exp)
-        if regex.search(path):
+        regexp = regex.compile(exp)
+        if regexp.search(path):
             return True
         else:
             return False
