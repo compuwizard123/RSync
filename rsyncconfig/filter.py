@@ -23,7 +23,7 @@ class FilterRule(object):
         True
         >>> FilterRule('/foo').match('foo/bar', file_stat)
         True
-        >>> FilterRule('/?oo?').match('bloof', file_stat)
+        >>> FilterRule('/b?oo?').match('bloof', file_stat)
         True
         >>> FilterRule('*.c').match('foo/fizzy.c', file_stat)
         True
