@@ -64,9 +64,9 @@ class FilterRule(object):
                 return mtch
 
         exp = regex.sub('((^/)|(\/\*\*\*)|(\*\*)|(\*)|(\?)|(\.))',\
-                            chkMatch, exp)
+                            chkMatch, exp,flags=(regex.DOTALL | regex.MULTILINE))
 
-        regexp = regex.compile(exp)
+        regexp = regex.compile(exp, flags=(regex.DOTALL | regex.MULTILINE))
         return True if regexp.search(path) else False
 
 class ExcludeFilter(FilterRule):
