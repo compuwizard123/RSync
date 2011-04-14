@@ -56,8 +56,7 @@ class _FilterTestSuite(unittest.TestSuite):
         for (pattern, path, stat, matches) in test_tuples:
             if stat is None:
                 for stat in (FILE_STAT, DIR_STAT):
-                    self.addTest(_FilterTestCase(pattern, path, FILE_STAT, matches))
-                    self.addTest(_FilterTestCase(pattern, path, DIR_STAT, matches))
+                    self.addTest(_FilterTestCase(pattern, path, stat, matches))
             else:
                 self.addTest(_FilterTestCase(pattern, path, stat, matches))
 
@@ -106,10 +105,11 @@ def add_tests(suite):
         ('foo/***', 'foo', DIR_STAT, True),
         ('foo/***', 'foo', FILE_STAT, False),
         ('foo/***', 'foo/biz', None, True),
-        ('foo/***', 'a/b/foo/bar', None, False),
-        ('foo/***', 'biz/foo', None, False),
+        ('foo/***', 'a/b/foo/bar', None, True),
+        ('foo/***', 'biz/foo', DIR_STAT, True),
+        ('foo/***', 'biz/foo', FILE_STAT, False),
         ('/*/foo/***', 'biz/foo/file', None, True),
-        ('foo/***', 'biz/foo/foo spaced', None, False),
+        ('foo/***', 'biz/foo/foo spaced', None, True),
         ('/foo/***', 'foo', DIR_STAT, True),
         ('/foo/***', 'foo', FILE_STAT, False),
     )
