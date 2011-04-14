@@ -49,10 +49,11 @@ class FilterRule(object):
                 return '[^/]*'
             elif mtch == '**':
                 return '.*'
-            elif regex.search('\/\*\*\*',mtch) and S_ISDIR(stat.st_mode):
-                return '(?:/.*)?'
-            elif regex.search('\/\*\*\*',mtch) and not(S_ISDIR(stat.st_mode)):
-                return '(?:.+/.+)+'
+            elif regex.search('\/\*\*\*',mtch):
+                if S_ISDIR(stat.st_mode):
+                    return '(?:/.*)?'
+                else:
+                    return '(?:/.*)'
             elif mtch == '?':
                 return '[^/]'
             elif mtch == '/':
@@ -62,7 +63,7 @@ class FilterRule(object):
             else:
                 return mtch
 
-        exp = regex.sub('((^/)|(\/\*\*\*)|(\*\*)|([a-z]*\*[a-z]*)|(\?)|(\.))',\
+        exp = regex.sub('((^/)|(\/\*\*\*)|(\*\*)|(\*)|(\?)|(\.))',\
                             chkMatch, exp)
 
         regexp = regex.compile(exp)
