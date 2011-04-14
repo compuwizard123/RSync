@@ -37,20 +37,32 @@ class FilterRule(object):
         True
         '''
         exp = self.exp
-        if exp[0] == "/":
-            exp = exp.replace("/","^",1)
 
         if exp.endswith("/") and not(S_ISDIR(stat.st_mode)):
             return False
         else:
             exp = exp.rstrip("/")
 
-        exp = exp.replace("/***","(?:/.*)?").replace("**",".*").replace("?","[^/]").replace("*.","[^/]*\.")
+        def chkMatch(matchobj):
+            mtch = matchobj.group(0)
+            if mtch == '*':
+                return '[^/]*'
+            elif mtch == '**':
+                return '.*'
+            elif mtch == '/***':
+                return '(?:/.*)?'
+            elif mtch == '?':
+                return '[^/]'
+            elif mtch == '/':
+                return '^'
+            else:
+                return mtch
+
+        exp = regex.sub('((^/)|(\/\*\*\*)|(\*\*)|([a-z]*\*[a-z]*)|\?)',\
+                            chkMatch, exp)
+
         regexp = regex.compile(exp)
-        if regexp.search(path):
-            return True
-        else:
-            return False
+        return True if regexp.search(path) else False
 
 class ExcludeFilter(FilterRule):
     pass
