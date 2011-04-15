@@ -21,8 +21,6 @@ class FilterRule(object):
         True
         >>> FilterRule('bar').match('foo/bar', file_stat)
         True
-        >>> FilterRule('/foo').match('foo/bar', file_stat)
-        True
         >>> FilterRule('/b?oo?').match('bloof', file_stat)
         True
         >>> FilterRule('*.c').match('foo/fizzy.c', file_stat)
@@ -65,9 +63,11 @@ class FilterRule(object):
 
         exp = regex.sub('((^/)|(\/\*\*\*)|(\*\*)|(\*)|(\?)|(\.))',\
                             chkMatch, exp,flags=(regex.DOTALL | regex.MULTILINE))
+        if exp.endswith(']') or exp.endswith(')'):
+            exp = exp + '$'
 
         regexp = regex.compile(exp, flags=(regex.DOTALL | regex.MULTILINE))
-        return True if regexp.search(path) else False
+        return True if regexp.search(path.rstrip('/')) else False
 
 class ExcludeFilter(FilterRule):
     pass
