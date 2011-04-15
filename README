@@ -1,1 +1,8 @@
-rsync configuration tool --- a GUI tool for configuring rsync backup jobs and spotting common errors
+rsync configuration tool --- a GTK+ tool for configuring and configuring rsync jobs
+
+Dependencies:
+ * regex
+
+Development dependencies:
+ * pychecker
+ * mock (python-mock package)
