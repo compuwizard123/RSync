@@ -17,13 +17,38 @@
 Tests for the rsyncconfig.spider module
 '''
 
+import os
+import time
 import unittest
+from contextlib import nested
+
+from mock import patch, sentinel, Mock
 
 from rsyncconfig.spider import Spider
 
 
 class TestSpider(unittest.TestCase):
-    pass
+    def __init__(self, *args, **kwargs):
+        unittest.TestCase.__init__(self, *args, **kwargs)
+        self.os_mocks = nested(
+            patch('os.listdir'),
+            patch('os.lstat'),
+        )
+
+    def setUp(self):
+        self.fstree = Mock(name='fstree',
+                           spec=['add_path', 'update_path', 'remove_path'])
+
+    def test_empty(self):
+        with self.os_mocks as (listdir, lstat):
+            listdir.return_value = []
+
+            spider = Spider(self.fstree, '.')
+            time.sleep(0.01)
+            spider.stop()
+
+            listdir.assert_called_with('.')
+            self.assertFalse(self.fstree.add_path.called)
 
 
 def get_suite():
