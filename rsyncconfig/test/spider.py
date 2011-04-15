@@ -48,6 +48,7 @@ class TestSpider(unittest.TestCase):
             spider.stop()
 
             listdir.assert_called_with('.')
+            self.assertFalse(lstat.called)
             self.assertFalse(self.fstree.add_path.called)
 
 

@@ -13,6 +13,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import os
+import threading
+
 
 class Spider(object):
     def __init__(self, tree, path):
@@ -21,9 +24,18 @@ class Spider(object):
         A newly-created Spider spawns a worker thread and begins traversing the
         given path.
         '''
-        pass
+        self.tree = tree
+        self.path = path
+        self.running = True
+
+        self.thread = threading.Thread(target=self.run)
+        self.thread.run()
+
+    def run(self):
+        for name in os.listdir(self.path):
+            os.lstat(os.path.join(self.path, name))
 
     def stop(self):
         '''Terminate the data collection process
         '''
-        pass
+        self.running = False
