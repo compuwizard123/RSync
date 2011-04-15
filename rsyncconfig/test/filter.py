@@ -73,11 +73,13 @@ def add_tests(suite):
     # Check that the pattern is anchored to the root if it leads with a slash.
     suite.add_test_table(
         ('/foo', 'foo', None, True),
+        ('/foo', 'foo/bar', None, True),
         ('foo', 'foo', None, True),
         ('foo', 'bar/foo', None, True),
         ('/foo', 'bar/foo', None, False),
     )
 
+    # Test *
     suite.add_test_table(
         ('*', 'foo', None, True),
         ('foo.*', 'foo.bar', None, True),
@@ -87,13 +89,15 @@ def add_tests(suite):
         ('/*/foo', 'bar/foo', None, True),
         ('/*/foo', 'bar/bar', None, False),
         ('/*b/', 'ab', DIR_STAT, True),
-        # TODO 
-        #('\\*', '*', None, False),
-        #('\\*', '\\*', None, True),
-        #('\\*', 'a', None, False),
-        #('*/\\*', 'a/*', None, True),
+        ('\\*', '*', None, False),
+        ('\\\*', '\*', None, True),
+        ('\\*', 'a', None, False),
+        # TODO
+        #('*/\*', 'a/*', None, True),
+        #('\*', '*', None, True),
     )
 
+    # Test **
     # Double wildcard can match any portion of a path.
     suite.add_test_table(
         ('/foo/**/baz', 'foo/bar/baz', None, True),
@@ -102,6 +106,7 @@ def add_tests(suite):
         ('/**/baz', 'foo/bar/baz', None, True),
     )
     
+    # Test /***
     suite.add_test_table(
         ('foo/***', 'foo', DIR_STAT, True),
         ('foo/***', 'foo', FILE_STAT, False),
@@ -117,17 +122,17 @@ def add_tests(suite):
     )
 
     # Test [a-z]
-
     suite.add_test_table(
         ('foo/*.[ch]', 'foo/bar.c', FILE_STAT, True),
         ('foo/*.[ch]', 'foo/bar.a', FILE_STAT, False),
         ('foo/*.[ch]', 'foo/bar.ch', FILE_STAT, False),
         ('foo/*.p[sy]', 'foo/bar.ps', FILE_STAT, True),
+        ('foo/*.p[sy]', 'foo/bar.psy', FILE_STAT, False),
         ('foo/[a-z]/*', 'foo/q/bar', None, True),
         ('foo/[a-z]/*', 'foo/ab/bar', None, False),
     )
 
-    # Test [[:alpha:]]
+    # Test character classes
     suite.add_test_table(
         ('[[:alnum:]]', '1', None, True),
         ('[[:alpha:]]', 'q', None, True),
@@ -147,24 +152,22 @@ def add_tests(suite):
         ('[[:word:]]/[[:word:]]/[[:word:]]', 'a/_/3', None, True),
         ('[[:xdigit:]]/[[:xdigit:]]/[[:xdigit:]]', '0/a/f', None, True),
     )
-    # TODO: Add more cases that shouldn't match
-    # TODO: Add Unicode test cases
 
     # Test ?
-
     suite.add_test_table(
         ('foo/?', 'foo/b', None, True),
         ('foo/b?', 'foo/ba', None, True),
         ('foo/b?a', 'foo/b/a', None, False),
     )
 
+    # TODO: Add more cases that shouldn't match
+    # TODO: Add Unicode test cases
+
     # Patterns match differently based on whether or not wildcard characters
     # are present.  If they are not present (or, presumably, are all escaped,
     # then they match literally (e.g., including the backslash escape).
     # Otherwise escaped wildcards match as the escaped character and unescaped
     # wildcards match as wildcards, as tested above.
-    #
-    # TODO
 
 def get_suite():
     suite = _FilterTestSuite()
