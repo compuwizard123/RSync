@@ -101,7 +101,7 @@ def add_tests(suite):
     # Double wildcard can match any portion of a path.
     suite.add_test_table(
         ('/foo/**/baz', 'foo/bar/baz', None, True),
-        ('**/baz/', 'foo/bar/baz/', DIR_STAT, True),
+        ('**/baz/', 'foo/bar/baz', DIR_STAT, True),
         ('**/baz', 'foo/bar/baz', DIR_STAT, True),
         ('/**/baz', 'foo/bar/baz', None, True),
     )
