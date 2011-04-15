@@ -45,7 +45,7 @@ class Spider(object):
         for path, st in self._dir_iter(dir_path):
             self.tree.add_path(path, st)
             if stat.S_ISDIR(st.st_mode):
-                self._process_dir(self, path)
+                self._process_dir(path)
 
     def _dir_iter(self, dir_path):
         for name in os.listdir(dir_path):
