@@ -33,6 +33,7 @@ class TestSpider(unittest.TestCase):
         self.os_mocks = nested(
             patch('os.listdir'),
             patch('os.lstat'),
+            patch('stat.S_ISDIR'),
         )
 
     def setUp(self):
@@ -40,7 +41,7 @@ class TestSpider(unittest.TestCase):
                            spec=['add_path', 'update_path', 'remove_path'])
 
     def test_empty(self):
-        with self.os_mocks as (listdir, lstat):
+        with self.os_mocks as (listdir, lstat, _):
             listdir.return_value = []
 
             spider = Spider(self.fstree, '.')
@@ -50,6 +51,23 @@ class TestSpider(unittest.TestCase):
             listdir.assert_called_with('.')
             self.assertFalse(lstat.called)
             self.assertFalse(self.fstree.add_path.called)
+
+    def test_one_file(self):
+        with self.os_mocks as (listdir, lstat, S_ISDIR):
+            foo_stat = Mock()
+            foo_stat.st_mode = sentinel.dir_mode
+            listdir.return_value = ['foo']
+            lstat.return_value = foo_stat
+            S_ISDIR.return_value = False
+
+            spider = Spider(self.fstree, '.')
+            time.sleep(0.01)
+            spider.stop()
+
+            listdir.assert_called_with('.')
+            lstat.assert_called_width('./foo')
+            S_ISDIR.assert_called_with(foo_stat.st_mode)
+            self.fstree.add_path.assert_called_with('./foo', foo_stat)
 
 
 def get_suite():
