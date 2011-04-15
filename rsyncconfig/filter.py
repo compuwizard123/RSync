@@ -1,6 +1,4 @@
 import regex
-import fnmatch
-import os
 from stat import *
 
 class FilterRule(object):
@@ -34,6 +32,9 @@ class FilterRule(object):
         >>> FilterRule('[[:alpha:]]').match('z', file_stat)
         True
         '''
+        assert not path.endswith('/')
+        assert not path.startswith('/')
+
         exp = self.exp
 
         if exp.endswith("/") and not(S_ISDIR(stat.st_mode)):
@@ -41,13 +42,13 @@ class FilterRule(object):
         else:
             exp = exp.rstrip("/")
 
-        def chkMatch(matchobj):
+        def callback(matchobj):
             mtch = matchobj.group(0)
             if mtch == '*':
                 return '[^/]*'
             elif mtch == '**':
                 return '.*'
-            elif regex.search('\/\*\*\*',mtch):
+            elif regex.search('\/\*\*\*', mtch):
                 if S_ISDIR(stat.st_mode):
                     return '(?:/.*)?'
                 else:
@@ -61,13 +62,13 @@ class FilterRule(object):
             else:
                 return mtch
 
-        exp = regex.sub('((^/)|(\/\*\*\*)|(\*\*)|(\*)|(\?)|(\.))',\
-                            chkMatch, exp,flags=(regex.DOTALL | regex.MULTILINE))
+        exp = regex.sub('((^/)|(\/\*\*\*$)|(\*\*)|(\*)|(\?)|(\.))',
+                        callback, exp, flags=regex.MULTILINE)
         if exp.endswith(']') or exp.endswith(')'):
             exp = exp + '$'
 
-        regexp = regex.compile(exp, flags=(regex.DOTALL | regex.MULTILINE))
-        return True if regexp.search(path.rstrip('/')) else False
+        regexp = regex.compile(exp, flags=regex.DOTALL | regex.MULTILINE)
+        return bool(regexp.search(path))
 
 class ExcludeFilter(FilterRule):
     pass
