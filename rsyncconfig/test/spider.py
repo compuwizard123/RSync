@@ -19,12 +19,21 @@ Tests for the rsyncconfig.spider module
 
 import os
 import time
+import posix
 import unittest
 from contextlib import nested
+from collections import deque
 
 from mock import patch, sentinel, Mock
 
 from rsyncconfig.spider import Spider
+
+
+def values(*vals):
+    '''Return a function that returns the given values on successive calls.
+    '''
+    queue = deque(vals)
+    return lambda *a, **kw: queue.popleft()
 
 
 class TestSpider(unittest.TestCase):
@@ -35,6 +44,10 @@ class TestSpider(unittest.TestCase):
             patch('os.lstat'),
             patch('stat.S_ISDIR'),
         )
+        self.dir_stat = Mock(name='dir_stat', spec=posix.stat_result)
+        self.dir_stat.st_mode = sentinel.dir_st_mode
+        self.file_stat = Mock(name='file_stat', spec=posix.stat_result)
+        self.file_stat.st_mode = sentinel.file_st_mode
 
     def setUp(self):
         self.fstree = Mock(name='fstree',
@@ -54,10 +67,8 @@ class TestSpider(unittest.TestCase):
 
     def test_one_file(self):
         with self.os_mocks as (listdir, lstat, S_ISDIR):
-            foo_stat = Mock()
-            foo_stat.st_mode = sentinel.dir_mode
             listdir.return_value = ['foo']
-            lstat.return_value = foo_stat
+            lstat.return_value = self.file_stat
             S_ISDIR.return_value = False
 
             spider = Spider(self.fstree, '.')
@@ -66,8 +77,29 @@ class TestSpider(unittest.TestCase):
 
             listdir.assert_called_with('.')
             lstat.assert_called_width('./foo')
-            S_ISDIR.assert_called_with(foo_stat.st_mode)
-            self.fstree.add_path.assert_called_with('./foo', foo_stat)
+            S_ISDIR.assert_called_with(self.file_stat.st_mode)
+            self.fstree.add_path.assert_called_with('./foo', self.file_stat)
+
+    def test_recurse_into_dir(self):
+        with self.os_mocks as (listdir, lstat, S_ISDIR):
+            listdir.side_effect = values(['foo'], [])
+            lstat.side_effect = values(self.dir_stat)
+            S_ISDIR.side_effect = values(True)
+
+            spider = Spider(self.fstree, '.')
+            time.sleep(0.01)
+            spider.stop()
+
+            self.assertEqual(listdir.call_args_list, [
+                (('.',), {}),
+                (('./foo',), {}),
+            ])
+            self.assertEqual(lstat.call_args_list, [
+                (('./foo',), {}),
+            ])
+            self.assertEqual(S_ISDIR.call_args_list, [
+                ((self.dir_stat.st_mode,), {}),
+            ])
 
 
 def get_suite():
