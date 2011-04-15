@@ -14,6 +14,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
+import errno
+import stat
 import threading
 
 
@@ -28,12 +30,35 @@ class Spider(object):
         self.path = path
         self.running = True
 
-        self.thread = threading.Thread(target=self.run)
-        self.thread.run()
+        self.thread = threading.Thread(name=repr(self), target=self.run)
+        self.thread.daemon = True
+        self.thread.start()
+
+    def __repr__(self):
+        return '{0}({1!r}, {2!r})'.format(self.__class__.__name__,
+                                          self.tree, self.path)
 
     def run(self):
-        for name in os.listdir(self.path):
-            os.lstat(os.path.join(self.path, name))
+        self._process_dir(self.path)
+
+    def _process_dir(self, dir_path):
+        for path, st in self._dir_iter(dir_path):
+            self.tree.add_path(path, st)
+            if stat.S_ISDIR(st.st_mode):
+                self._process_dir(self, path)
+
+    def _dir_iter(self, dir_path):
+        for name in os.listdir(dir_path):
+            path = os.path.join(dir_path, name)
+            try:
+                stat = os.lstat(path)
+            except EnvironmentError, e:
+                if e.errno == errno.ENOENT:
+                    # Race where the object has been removed from the directory
+                    # since it was listed.
+                    continue
+                raise e
+            yield path, stat
 
     def stop(self):
         '''Terminate the data collection process
