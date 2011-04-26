@@ -1,4 +1,4 @@
-PYFILES := $(shell echo **/*.py)
+PYFILES := $(shell find -name '*.py')
 LINTOPTS := --funcdoc --classdoc --changetypes --unreachable --privatevar
 
 test: .lint .coverage
@@ -12,7 +12,7 @@ test: .lint .coverage
 	python -m coverage -x run_tests.py
 
 show-coverage: .coverage
-	python -m coverage -r -o /usr
+	python -m coverage -r -m -o /usr
 
 clean:
 	rm -f *.pyc **/*.pyc *.pyo **/*.pyo
