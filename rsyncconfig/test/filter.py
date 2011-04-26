@@ -90,7 +90,7 @@ def add_tests(suite):
     # Check that the pattern is anchored to the root if it leads with a slash.
     suite.add_test_table(
         ('/foo', 'foo', None, True),
-        ('/foo', 'foo/bar', None, True),
+        ('/foo', 'foo/bar', None, False),
         ('foo', 'foo', None, True),
         ('foo', 'bar/foo', None, True),
         ('/foo', 'bar/foo', None, False),
