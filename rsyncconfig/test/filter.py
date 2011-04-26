@@ -27,13 +27,10 @@ from rsyncconfig.filter import FilterRule
 
 
 FILE_STAT = os.stat(__file__)
-if not S_ISREG(FILE_STAT.st_mode):
-    raise ValueError('Unable to get mock file stat')
-
+assert S_ISREG(FILE_STAT.st_mode)
 
 DIR_STAT = os.stat(os.path.dirname(__file__))
-if not S_ISDIR(DIR_STAT.st_mode):
-    raise ValueError('Unable to get mock dir stat')
+assert S_ISDIR(DIR_STAT.st_mode)
 
 
 class _FilterTestCase(unittest.TestCase):
