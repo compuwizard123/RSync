@@ -80,8 +80,7 @@ class FilterRule(object):
 
         exp = regex.sub('((^/)|(\/\*\*\*$)|(\*\*)|(\*)|(\?)|(\.))',
                         callback, exp, flags=regex.MULTILINE)
-        if exp.endswith(']') or exp.endswith(')'):
-            exp = exp + '$'
+        exp = exp + '$'
 
         regexp = regex.compile(exp, flags=regex.DOTALL | regex.MULTILINE)
         return bool(regexp.search(path))
