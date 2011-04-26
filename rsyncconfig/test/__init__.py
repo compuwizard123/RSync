@@ -12,6 +12,3 @@ def get_suite():
         spider.get_suite(),
         doctest.DocTestSuite('rsyncconfig.filter')
     ])
-
-if __name__ == '__main__':
-    unittest.TextTestRunner().run(get_suite())

@@ -6,3 +6,4 @@ Dependencies:
 Development dependencies:
  * pychecker
  * mock (python-mock package)
+ * coverage (python-coverage package)
