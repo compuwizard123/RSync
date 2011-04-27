@@ -20,13 +20,13 @@ import threading
 
 
 class Spider(object):
-    def __init__(self, tree, path):
+    def __init__(self, fstree, path):
         '''Create a new Spider object.
 
         A newly-created Spider spawns a worker thread and begins traversing the
         given path.
         '''
-        self.tree = tree
+        self.fstree = fstree
         self.path = path
         self.running = True
 
@@ -36,14 +36,14 @@ class Spider(object):
 
     def __repr__(self):
         return '{0}({1!r}, {2!r})'.format(self.__class__.__name__,
-                                          self.tree, self.path)
+                                          self.fstree, self.path)
 
     def run(self):
         self._process_dir(self.path)
 
     def _process_dir(self, dir_path):
         for path, st in self._dir_iter(dir_path):
-            self.tree.add_path(path, st)
+            self.fstree.add_path(path, st)
             if stat.S_ISDIR(st.st_mode):
                 self._process_dir(path)
 
