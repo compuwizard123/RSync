@@ -1,3 +1,5 @@
+# This Python file uses the following encoding: utf-8
+
 # Copyright (C) 2011 Thomas W. Most
 # Copyright (C) 2011 Kevin J. Risden
 # Copyright (C) 2011 Eric A. Henderson
@@ -148,23 +150,112 @@ def add_tests(suite):
 
     # Test character classes
     suite.add_test_table(
-        ('[[:alnum:]]', '1', None, True),
-        ('[[:alpha:]]', 'q', None, True),
+        ('[[:alnum:]]', 'a', None, True),
+        ('[[:alnum:]]', 'aA', None, True),
+        ('[[:alnum:]]', 'A', None, True),
+        ('[[:alnum:]]', '0', None, True),
+        ('[[:alnum:]]', '10', None, True),
+        ('[[:alnum:]]', 'a0', None, True),
+        ('[[:alnum:]]', '\t', None, False),
+        ('[[:alnum:]]', 'a\t', None, False),
+        ('[[:alnum:]]', '0\t', None, False),
+        ('[[:alnum:]]', 'a0\t', None, False),
+
+        ('[[:alpha:]]', 'a', None, True),
+        ('[[:alpha:]]', 'A', None, True),
+        ('[[:alpha:]]', 'aA', None, True),
+        ('[[:alpha:]]', '0', None, False),
+        ('[[:alpha:]]', 'a0', None, False),
+
+        ('[[:ascii:]]', 'a', None, True),
+        ('[[:ascii:]]', '0', None, True),
         ('[[:ascii:]]', '\n', None, True),
+        ('[[:ascii:]]', 'a0', None, True),
+        ('[[:ascii:]]', 'a\n', None, True),
+        ('[[:ascii:]]', '0\n', None, True),
+        ('[[:ascii:]]', 'a0\n', None, True),
+        ('[[:ascii:]]', '\t', None, True),
+        ('[[:ascii:]]', 'Ǡ', None, False),
+
         ('[[:blank:]]', ' ', None, True),
         ('[[:blank:]]', '\t', None, True),
+        ('[[:blank:]]', 'a', None, False),
+        ('[[:blank:]]', '0', None, False),
+        ('[[:blank:]]', 'a\t', None, True),
+        ('[[:blank:]]', '0\t', None, True),
+        ('[[:blank:]]', 'a ', None, True),
+        ('[[:blank:]]', '0 ', None, True),
+
         ('[[:cntrl:]]', '\t', None, True),
+        ('[[:cntrl:]]', '\n', None, True),
+        ('[[:cntrl:]]', 'a', None, False),
+        ('[[:cntrl:]]', '0', None, False),
+        ('[[:cntrl:]]', 'Ǡ', None, False),
+
         ('[[:digit:]]', '9', None, True),
+        ('[[:digit:]]', '0', None, True),
+        ('[[:digit:]]', 'a', None, False),
+        ('[[:digit:]]', 'A', None, False),
+        ('[[:digit:]]', '\t', None, False),
+
+        ('[[:graph:]]', 'a', None, True),
+        ('[[:graph:]]', '0', None, True),
         ('[[:graph:]]', '*', None, True),
+        ('[[:graph:]]', ' ', None, False),
+        ('[[:graph:]]', '\t', None, False),
+
         ('[[:lower:]]', 'a', None, True),
         ('[[:lower:]]', 'B', None, False),
+        ('[[:lower:]]', '0', None, False),
+
+        ('[[:print:]]', 'a', None, True),
+        ('[[:print:]]', 'A', None, True),
+        ('[[:print:]]', '0', None, True),
         ('[[:print:]]', '&', None, True),
+        ('[[:print:]]', '*', None, True),
+        ('[[:print:]]', 'Ǡ', None, False),
+        ('[[:print:]]', '\t', None, False),
+        ('[[:print:]]', '\n', None, False),
+
         ('[[:punct:]]', '(', None, True),
+        ('[[:punct:]]', '*', None, True),
+        ('[[:punct:]]', '!', None, True),
+        ('[[:punct:]]', 'a', None, False),
+        ('[[:punct:]]', '0', None, False),
+        ('[[:punct:]]', 'A', None, False),
+        ('[[:punct:]]', 'Ǡ', None, False),
+
         ('[[:space:]]', '\v', None, True),
+        ('[[:space:]]', ' ', None, True),
+        ('[[:space:]]', '\n', None, True),
+        ('[[:space:]]', 'a', None, False),
+        ('[[:space:]]', 'A', None, False),
+        ('[[:space:]]', '0', None, False),
+        ('[[:space:]]', 'Ǡ', None, False),
+
         ('[[:upper:]]', 'j', None, False),
         ('[[:upper:]]', 'J', None, True),
-        ('[[:word:]]/[[:word:]]/[[:word:]]', 'a/_/3', None, True),
-        ('[[:xdigit:]]/[[:xdigit:]]/[[:xdigit:]]', '0/a/f', None, True),
+        ('[[:upper:]]', '0', None, False),
+        ('[[:upper:]]', '\n', None, False),
+        ('[[:upper:]]', 'Ǡ', None, False),
+
+        ('[[:word:]]', 'a', None, True),
+        ('[[:word:]]', 'A', None, True),
+        ('[[:word:]]', '0', None, True),
+        ('[[:word:]]', '9', None, True),
+        ('[[:word:]]', '_', None, True),
+        ('[[:word:]]', '\n', None, False),
+        ('[[:word:]]', '\\', None, False),
+        ('[[:word:]]', '-', None, False),
+
+        ('[[:xdigit:]]', '0', None, True),
+        ('[[:xdigit:]]', '9', None, True),
+        ('[[:xdigit:]]', 'a', None, True),
+        ('[[:xdigit:]]', 'f', None, True),
+        ('[[:xdigit:]]', 'A', None, True),
+        ('[[:xdigit:]]', 'g', None, False),
+        ('[[:xdigit:]]', '_', None, False),
+        ('[[:xdigit:]]', '\n', None, False),
     )
 
     # Test ?
@@ -173,9 +264,6 @@ def add_tests(suite):
         ('foo/b?', 'foo/ba', None, True),
         ('foo/b?a', 'foo/b/a', None, False),
     )
-
-    # TODO: Add more cases that shouldn't match
-    # TODO: Add Unicode test cases
 
     # Patterns match differently based on whether or not wildcard characters
     # are present.  If they are not present (or, presumably, are all escaped,
