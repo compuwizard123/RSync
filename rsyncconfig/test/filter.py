@@ -84,6 +84,10 @@ def add_tests(suite):
         ('/foo/', 'foo', FILE_STAT, False),
         ('foo/', 'bar/foo', FILE_STAT, False),
         ('foo/', 'bar/foo', DIR_STAT, True),
+        ('/ԲարեւՁեզ/', 'ԲարեւՁեզ', DIR_STAT, True),
+        ('/ԲարեւՁեզ/', 'ԲարեւՁեզ', FILE_STAT, False),
+        ('Ձեզ/', 'Բարեւ/Ձեզ', DIR_STAT, True),
+        ('Ձեզ/', 'Բարեւ/Ձեզ', FILE_STAT, False),
     )
 
     # Check that the pattern is anchored to the root if it leads with a slash.
@@ -93,21 +97,35 @@ def add_tests(suite):
         ('foo', 'foo', None, True),
         ('foo', 'bar/foo', None, True),
         ('/foo', 'bar/foo', None, False),
+        ('/Բար', 'Բար', None, True),
+        ('/Բար', 'Բար/եւՁեզ', None, False),
+        ('Բար', 'Բար', None, True),
+        ('Բար', 'եւՁեզ/Բար', None, True),
+        ('/Բար', 'եւՁեզ/Բար', None, False),
     )
 
     # Test *
     suite.add_test_table(
         ('*', 'foo', None, True),
+        ('*', 'Բար', None, True),
         ('foo.*', 'foo.bar', None, True),
+        ('Բար.*', 'Բար.եւՁեզ', None, True),
         ('foo.*', 'foo.', None, True),
+        ('Բար.*', 'Բար.', None, True),
         ('foo.*', 'foo', None, False),
+        ('Բար.*', 'Բար', None, False),
         ('foo.*', 'foo/bar', None, False),
+        ('Բար.*', 'Բար/եւՁեզ', None, False),
         ('/*/foo', 'bar/foo', None, True),
+        ('/*/Բար', 'եւՁեզ/Բար', None, True),
         ('/*/foo', 'bar/bar', None, False),
+        ('/*/Բար', 'եւՁեզ/եւՁեզ', None, False),
         ('/*b/', 'ab', DIR_STAT, True),
+        ('/*ա/', 'Բա', DIR_STAT, True),
         ('\\*', '*', None, False),
         ('\\\*', '\*', None, True),
         ('\\*', 'a', None, False),
+        ('\\*', 'Բ', None, False),
         # TODO
         #('*/\*', 'a/*', None, True),
         #('\*', '*', None, True),
@@ -117,24 +135,41 @@ def add_tests(suite):
     # Double wildcard can match any portion of a path.
     suite.add_test_table(
         ('/foo/**/baz', 'foo/bar/baz', None, True),
+        ('/Բար/**/եզ', 'Բար/եւՁ/եզ', None, True),
         ('**/baz/', 'foo/bar/baz', DIR_STAT, True),
-        ('**/baz', 'foo/bar/baz', DIR_STAT, True),
+        ('**/baz/', 'foo/bar/baz', FILE_STAT, False),
+        ('**/եզ/', 'Բար/եւՁ/եզ', DIR_STAT, True),
+        ('**/եզ/', 'Բար/եւՁ/եզ', FILE_STAT, False),
+        ('**/baz', 'foo/bar/baz', None, True),
+        ('**/եզ', 'Բար/եւՁ/եզ', None, True),
         ('/**/baz', 'foo/bar/baz', None, True),
+        ('/**/եզ', 'Բար/եւՁ/եզ', None, True),
     )
     
     # Test /***
     suite.add_test_table(
         ('foo/***', 'foo', DIR_STAT, True),
+        ('Բար/***', 'Բար', DIR_STAT, True),
         ('foo/***', 'foo', FILE_STAT, False),
+        ('Բար/***', 'Բար', FILE_STAT, False),
         ('foo/***', 'foo/biz', None, True),
+        ('Բար/***', 'Բար/եւՁ', None, True),
         ('foo/***', 'a/b/foo/bar', None, True),
+        ('Բար/***', 'a/b/Բար/եւՁ', None, True),
         ('foo/***', 'biz/foo', DIR_STAT, True),
+        ('Բար/***', 'ab/Բար', DIR_STAT, True),
         ('foo/***', 'biz/foo', FILE_STAT, False),
+        ('Բար/***', 'ab/Բար', FILE_STAT, False),
         ('/foo/***', 'biz/foo', None, False),
+        ('/Բար/***', 'ab/Բար', None, False),
         ('/*/foo/***', 'biz/foo/file', None, True),
+        ('/*/Բար/***', 'ab/Բար/եւՁ', None, True),
         ('foo/***', 'biz/foo/foo spaced', None, True),
+        ('Բար/***', 'ab/Բար/Բար եւՁ', None, True),
         ('/foo/***', 'foo', DIR_STAT, True),
         ('/foo/***', 'foo', FILE_STAT, False),
+        ('/Բար/***', 'Բար', DIR_STAT, True),
+        ('/Բար/***', 'Բար', FILE_STAT, False),
     )
 
     # Test [a-z]
@@ -146,6 +181,8 @@ def add_tests(suite):
         ('foo/*.p[sy]', 'foo/bar.psy', FILE_STAT, False),
         ('foo/[a-z]/*', 'foo/q/bar', None, True),
         ('foo/[a-z]/*', 'foo/ab/bar', None, False),
+        ('foo/[a-z]', 'foo/Բ', None, False),
+        ('foo/[a-z]*', 'foo/Բար', None, False),
     )
 
     # Test character classes
@@ -160,12 +197,14 @@ def add_tests(suite):
         ('[[:alnum:]]', 'a\t', None, False),
         ('[[:alnum:]]', '0\t', None, False),
         ('[[:alnum:]]', 'a0\t', None, False),
+        ('[[:alnum:]]', 'Բ', None, False),
 
         ('[[:alpha:]]', 'a', None, True),
         ('[[:alpha:]]', 'A', None, True),
         ('[[:alpha:]]', 'aA', None, True),
         ('[[:alpha:]]', '0', None, False),
         ('[[:alpha:]]', 'a0', None, False),
+        ('[[:alpha:]]', 'Բ', None, False),
 
         ('[[:ascii:]]', 'a', None, True),
         ('[[:ascii:]]', '0', None, True),
@@ -185,6 +224,8 @@ def add_tests(suite):
         ('[[:blank:]]', '0\t', None, True),
         ('[[:blank:]]', 'a ', None, True),
         ('[[:blank:]]', '0 ', None, True),
+        ('[[:blank:]]', 'Ǡ', None, False),
+        ('[[:blank:]]', 'Ǡ ', None, True),
 
         ('[[:cntrl:]]', '\t', None, True),
         ('[[:cntrl:]]', '\n', None, True),
@@ -197,16 +238,19 @@ def add_tests(suite):
         ('[[:digit:]]', 'a', None, False),
         ('[[:digit:]]', 'A', None, False),
         ('[[:digit:]]', '\t', None, False),
+        ('[[:digit:]]', 'Ǡ', None, False),
 
         ('[[:graph:]]', 'a', None, True),
         ('[[:graph:]]', '0', None, True),
         ('[[:graph:]]', '*', None, True),
         ('[[:graph:]]', ' ', None, False),
         ('[[:graph:]]', '\t', None, False),
+        ('[[:graph:]]', 'Ǡ', None, False),
 
         ('[[:lower:]]', 'a', None, True),
         ('[[:lower:]]', 'B', None, False),
         ('[[:lower:]]', '0', None, False),
+        ('[[:lower:]]', 'Ǡ', None, False),
 
         ('[[:print:]]', 'a', None, True),
         ('[[:print:]]', 'A', None, True),
@@ -247,6 +291,7 @@ def add_tests(suite):
         ('[[:word:]]', '\n', None, False),
         ('[[:word:]]', '\\', None, False),
         ('[[:word:]]', '-', None, False),
+        ('[[:word:]]', 'Ǡ', None, False),
 
         ('[[:xdigit:]]', '0', None, True),
         ('[[:xdigit:]]', '9', None, True),
@@ -256,6 +301,7 @@ def add_tests(suite):
         ('[[:xdigit:]]', 'g', None, False),
         ('[[:xdigit:]]', '_', None, False),
         ('[[:xdigit:]]', '\n', None, False),
+        ('[[:xdigit:]]', 'Ǡ', None, False),
     )
 
     # Test ?
