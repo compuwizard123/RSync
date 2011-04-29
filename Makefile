@@ -8,11 +8,23 @@ test: .lint .coverage
 	touch .lint
 
 # Run the tests via coverage
-.coverage: $(PYFILES)
-	python -m coverage -x run_tests.py
+.coverage:
+	#python -m coverage -x run_tests.py
+	coverage -x run_tests.py
 
 show-coverage: .coverage
-	python -m coverage -r -m -o /usr
+	#python -m coverage -r -m -o /usr
+	coverage -r -m -o /usr
+
+complexity:
+	./pygenie.py complexity --verbose $(PYFILES)
+
+complexity-simple:
+	./pygenie.py complexity $(PYFILES)
+cloc:
+	cloc --by-file-by-lang --no3 --quiet $(PYFILES)
+
+metrics: complexity show-coverage cloc
 
 clean:
 	rm -f *.pyc **/*.pyc *.pyo **/*.pyo
