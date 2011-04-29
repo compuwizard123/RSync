@@ -24,7 +24,11 @@ complexity-simple:
 cloc:
 	cloc --by-file-by-lang --no3 --quiet $(PYFILES)
 
-metrics: complexity show-coverage cloc
+commentsmethod:
+	@echo 'Avg Comments/Method'
+	@echo 'scale=3;'$(shell cloc --no3 --quiet --csv $(PYFILES) | awk -F, '/Python/ {print $$4}')'/'$(shell grep -r --exclude=*.pyc '^ *def*:*' ./rsyncconfig/ | wc -l) | cat | bc
+
+metrics: complexity show-coverage cloc commentsmethod
 
 clean:
 	rm -f *.pyc **/*.pyc *.pyo **/*.pyo
