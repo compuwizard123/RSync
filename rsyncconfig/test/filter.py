@@ -1,4 +1,4 @@
-# This Python file uses the following encoding: utf-8
+# encoding: utf-8
 
 # Copyright (C) 2011 Thomas W. Most
 # Copyright (C) 2011 Kevin J. Risden
