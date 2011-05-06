@@ -13,6 +13,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import os
+import stat
+
 import gobject
 import gtk
 
@@ -31,9 +34,17 @@ class FSTree(object):
         self.store = gtk.TreeStore(gobject.TYPE_STRING, 
                                    object,
                                    gobject.TYPE_BOOLEAN)
+        self._dirs = {}
 
-    def add_path(self, path, stat, scanning=True):
-        pass
+    def add_path(self, path, stat_t, scanning=True):
+        basedir, _ = os.path.split(path)
+        if basedir:
+            parent = self._dirs[basedir]
+        else:
+            parent = None
+        iter = self.store.append(parent, (path, stat_t, scanning))
+        if stat.S_ISDIR(stat_t):
+            self._dirs[path] = iter
 
     def update_path(self, path, stat, scanning=False):
         pass
