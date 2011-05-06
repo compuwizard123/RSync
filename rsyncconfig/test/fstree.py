@@ -101,9 +101,9 @@ class TestFSTree(unittest.TestCase):
             self.fstree.add_path('dir', sentinel.dir_stat)
             self.fstree.add_path('dir/foo', sentinel.file_stat, False)
             self.fstree.add_path('dir/bar', sentinel.file_stat, False)
-            self.assertEqual([('bar', sentinel.dir_stat, True, [
-                ('dir/bar', sentinel.bar_stat, False, []),
-                ('dir/foo', sentinel.foo_stat, False, [])
+            self.assertEqual([('dir', sentinel.dir_stat, True, [
+                ('dir/bar', sentinel.file_stat, False, []),
+                ('dir/foo', sentinel.file_stat, False, [])
             ])], store_to_list(self.fstree.store))
 
 

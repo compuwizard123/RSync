@@ -34,9 +34,12 @@ class FSTree(object):
         self.store = gtk.TreeStore(gobject.TYPE_STRING, 
                                    object,
                                    gobject.TYPE_BOOLEAN)
+        self.store.set_sort_column_id(COL_PATH, gtk.SORT_ASCENDING)
         self._dirs = {}
 
     def add_path(self, path, stat_t, scanning=True):
+        '''Add a path and metadata to the store.
+        '''
         basedir, _ = os.path.split(path)
         if basedir:
             parent = self._dirs[basedir]
@@ -44,10 +47,15 @@ class FSTree(object):
             parent = None
         iter = self.store.append(parent, (path, stat_t, scanning))
         if stat.S_ISDIR(stat_t):
+            # XXX: Is keeping around iters costly?
             self._dirs[path] = iter
 
     def update_path(self, path, stat, scanning=False):
+        '''Update a path's metadata.
+        '''
         pass
 
     def remove_path(self, path):
+        '''Remove a path from the store.
+        '''
         pass
