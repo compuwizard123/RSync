@@ -7,3 +7,4 @@ Development dependencies:
  * pychecker
  * mock (python-mock package)
  * coverage (python-coverage package)
+ * cc.py and pygenie.py (bundled, but not under the GPLv3)
