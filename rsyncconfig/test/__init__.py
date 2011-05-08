@@ -4,6 +4,7 @@ import doctest
 from . import filter
 from . import spider
 from . import fstree
+from . import gui
 
 loader = unittest.TestLoader()
 
@@ -12,5 +13,6 @@ def get_suite():
         filter.get_suite(),
         spider.get_suite(),
         fstree.get_suite(),
+        gui.get_suite(),
         doctest.DocTestSuite('rsyncconfig.filter')
     ])
