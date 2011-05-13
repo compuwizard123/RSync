@@ -17,6 +17,26 @@
 import regex
 from stat import *
 
+class FilterRuleset(object):
+    #list FilterRules
+    def __init__(self, filters):
+        '''
+        split string and store in list of FilterRules
+        '''
+        pass
+
+    def __str__():
+        '''
+        iterate over filter list and return newline separated string of filters
+        '''
+        pass
+
+    def apply(self, path, stat):
+        '''
+        iterate over filter list and check match (filtered in/out)
+        '''
+        pass
+
 class FilterRule(object):
     def __init__(self, pattern):
         self.exp = pattern
