@@ -1,25 +1,35 @@
 PYFILES := $(shell find -name '*.py')
 LINTOPTS := --funcdoc --classdoc --changetypes --unreachable --privatevar
+COVERAGE_REPORT_FLAGS := --omit=/usr,tools/
+
+## Tool binary locations
+COVERAGE := tools/coverage
+PYGENIE := tools/pygenie.py
 
 test: .lint .coverage
 
+## Internationalization ##
+%.ui.h: %.ui
+	intltool-extract --type=gettext/glade $<
+
+## Testing and code metrics ##
 .lint: $(PYFILES)
 	pychecker $(LINTOPTS) $*
 	touch .lint
 
 # Run the tests via coverage
 .coverage:
-	@coverage -x run_tests.py
+	@$(COVERAGE) run tools/run_tests.py
 
 show-coverage: .coverage
-	@coverage report -m --include=*
+	@$(COVERAGE) report -m $(COVERAGE_REPORT_FLAGS)
 
 coverage-simple: .coverage
 	@echo -n 'Total Coverage: '
-	@coverage report -m --include=* | awk '/TOTAL/ {print $$4}'
+	@$(COVERAGE) report -m $(COVERAGE_REPORT_FLAGS) | awk '/TOTAL/ {print $$4}'
 
 complexity:
-	@./pygenie.py complexity --verbose $(PYFILES)
+	@$(PYGENIE) complexity --verbose $(PYFILES)
 
 complexity-avg:
 	@echo -n 'Avg Complexity: '
@@ -34,7 +44,7 @@ cloc-simple:
 
 commentsmethod:
 	@echo -n 'Avg Comments/Method: '
-	@echo 'scale=3;'$(shell cloc --no3 --quiet --csv $(PYFILES) | awk -F, '/Python/ {print $$4}')'/'$(shell grep -r '^ *def*:*' ./rsyncconfig/ | wc -l) | cat | bc
+	@echo 'scale=3;'$(shell cloc --no3 --quiet --csv $(PYFILES) | awk -F, '/Python/ {print $$4}')'/'$(shell grep -r '^ *def*:*' './rsyncconfig/' | wc -l) | cat | bc
 
 metrics: coverage-simple complexity-avg cloc-simple commentsmethod
 

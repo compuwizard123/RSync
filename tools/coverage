@@ -1,0 +1,8 @@
+#!/usr/bin/env python
+# There doesn't seem to be a coverage binary in the python-coverage package in
+# Ubuntu Natty, so this file provides an executable for the Makefile to call.
+
+import coverage
+
+if __name__ == '__main__':
+    coverage.main()
