@@ -19,8 +19,8 @@ import gtk
 def load_gui():
     '''Load the GUI, returning a gtk.Builder instance
     '''
-    data_dir = os.path.dirname(os.path.dirname(__file__))
-    ui_file = os.path.join(data_dir, 'gui.ui')
+    data_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data')
+    ui_file = os.path.join(data_dir, 'ui', 'mainwindow.ui')
     builder = gtk.Builder()
     builder.add_from_file(ui_file)
     return builder
