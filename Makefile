@@ -18,7 +18,7 @@ test: .lint .coverage
 	touch .lint
 
 # Run the tests via coverage
-.coverage:
+.coverage: $(PYFILES)
 	@$(COVERAGE) run tools/run_tests.py
 
 show-coverage: .coverage
