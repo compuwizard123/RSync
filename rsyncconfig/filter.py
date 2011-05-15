@@ -18,6 +18,7 @@ import regex
 from stat import *
 
 class FilterRuleset(object):
+    #first matching pattern is acted on
     #list FilterRules
     def __init__(self, filters):
         '''
@@ -106,7 +107,14 @@ class FilterRule(object):
         return bool(regexp.search(path))
 
 class ExcludeFilter(FilterRule):
-    pass
+    def __init__(self, pattern):
+        super(Derived, self).__init__(pattern)
+
+    def match(self, path, stat):
+        super(Derived, self).match(path, stat)
 
 class IncludeFilter(FilterRule):
-    pass
+    def __init__(self, pattern):
+        super(Derived, self).__init__(pattern)
+    def match(self, path, stat):
+        super(Derived, self).match(path, stat)
