@@ -36,9 +36,93 @@ class TestFilterRuleset(unittest.TestCase):
         pass
 
     def test_empty_filters(self):
-        '''
-        '''
-        frs = FilterRuleset("")
+        frs = FilterRuleset("");
+        self.assertTrue(frs.apply('test', FILE_STAT));
+        self.assertTrue(frs.apply('test', DIR_STAT));
+
+    def test_comment_filter(self):
+        frs = FilterRuleset(";exclude /test\ninclude test2");
+        self.assertTrue(frs.apply('/test/test2', FILE_STAT));
+        self.assertTrue(frs.apply('/test/test2', DIR_STAT));
+
+    def test_one_include_filter(self):
+        frs = FilterRuleset("include test");
+        self.assertTrue(frs.apply('/test', FILE_STAT));
+        self.assertTrue(frs.apply('/test', DIR_STAT));
+        self.assertTrue(frs.apply('/test2', FILE_STAT));
+        self.assertTrue(frs.apply('/test2', DIR_STAT));
+
+    def test_one_plus_filter(self):
+        frs = FilterRuleset("+ test");
+        self.assertTrue(frs.apply('/test', FILE_STAT));
+        self.assertTrue(frs.apply('/test', DIR_STAT));
+        self.assertTrue(frs.apply('/test2', FILE_STAT));
+        self.assertTrue(frs.apply('/test2', DIR_STAT));
+
+    def test_one_exclude_filter(self):
+        frs = FilterRuleset("exclude test");
+        self.assertFalse(frs.apply('/test', FILE_STAT));
+        self.assertFalse(frs.apply('/test', DIR_STAT));
+        self.assertFalse(frs.apply('/testing', FILE_STAT));
+        self.assertFalse(frs.apply('/testing', DIR_STAT));
+
+    def test_one_minus_filter(self):
+        frs = FilterRuleset("- test");
+        self.assertFalse(frs.apply('/test', FILE_STAT));
+        self.assertFalse(frs.apply('/test', DIR_STAT));
+        self.assertTrue(frs.apply('/testing', FILE_STAT));
+        self.assertTrue(frs.apply('/testing', DIR_STAT));
+
+    def test_many_include_filters(self):
+        frs = FilterRuleset("include test\ninclude test2");
+        self.assertTrue(frs.apply('/test', FILE_STAT));
+        self.assertTrue(frs.apply('/test', DIR_STAT));
+        self.assertTrue(frs.apply('/test2', FILE_STAT));
+        self.assertTrue(frs.apply('/test2', DIR_STAT));
+        self.assertTrue(frs.apply('/test3', FILE_STAT));
+        self.assertTrue(frs.apply('/test3', DIR_STAT));
+
+    def test_many_plus_filters(self):
+        frs = FilterRuleset("+ test\n+ test2");
+        self.assertTrue(frs.apply('/test', FILE_STAT));
+        self.assertTrue(frs.apply('/test', DIR_STAT));
+        self.assertTrue(frs.apply('/test2', FILE_STAT));
+        self.assertTrue(frs.apply('/test2', DIR_STAT));
+        self.assertTrue(frs.apply('/test3', FILE_STAT));
+        self.assertTrue(frs.apply('/test3', DIR_STAT));
+
+    def test_many_exclude_filters(self):
+        frs = FilterRuleset("exclude test\nexclude test2");
+        self.assertFalse(frs.apply('/test', FILE_STAT));
+        self.assertFalse(frs.apply('/test', DIR_STAT));
+        self.assertFalse(frs.apply('/test2', FILE_STAT));
+        self.assertFalse(frs.apply('/test2', DIR_STAT));
+        self.assertTrue(frs.apply('/test3', FILE_STAT));
+        self.assertTrue(frs.apply('/test3', DIR_STAT));
+
+    def test_many_minus_filters(self):
+        frs = FilterRuleset("- test\n- test2");
+        self.assertFalse(frs.apply('/test', FILE_STAT));
+        self.assertFalse(frs.apply('/test', DIR_STAT));
+        self.assertFalse(frs.apply('/test2', FILE_STAT));
+        self.assertFalse(frs.apply('/test2', DIR_STAT));
+        self.assertTrue(frs.apply('/test3', FILE_STAT));
+        self.assertTrue(frs.apply('/test3', DIR_STAT));
+
+    def test_mixed_filters(self):
+        frs = FilterRuleset("exclude test1\ninclude test2\n- test3\n+ test4");
+        self.assertFalse(frs.apply('test1', FILE_STAT));
+        self.assertFalse(frs.apply('test1', DIR_STAT));
+        self.assertTrue(frs.apply('test2', FILE_STAT));
+        self.assertTrue(frs.apply('test2', DIR_STAT));
+        self.assertFalse(frs.apply('test3', FILE_STAT));
+        self.assertFalse(frs.apply('test3', DIR_STAT));
+        self.assertTrue(frs.apply('test4', FILE_STAT));
+        self.assertTrue(frs.apply('test4', DIR_STAT));
+        self.assertFalse(frs.apply('/test2/test1', FILE_STAT));
+        self.assertFalse(frs.apply('/test2/test1', DIR_STAT));
+        self.assertTrue(frs.apply('/test2/test3', FILE_STAT));
+        self.assertTrue(frs.apply('/test2/test3', DIR_STAT));
 
 def get_suite():
     return unittest.TestLoader().loadTestsFromTestCase(TestFilterRuleset)
