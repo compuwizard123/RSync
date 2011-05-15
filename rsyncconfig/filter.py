@@ -19,24 +19,38 @@ from stat import *
 
 class FilterRuleset(object):
     #first matching pattern is acted on
-    #list FilterRules
+    FilterRuleList = [];
+
     def __init__(self, filters):
         '''
         split string and store in list of FilterRules
         '''
-        pass
+        self.FilterRuleList = [];
+        for s in filters.splitlines():
+            s = s.split(' ');
+            if len(s) == 2:
+                if s[0] == 'include' or s[0] == '+':
+                    self.FilterRuleList.append(IncludeFilter(s[1]));
+                elif s[0] == 'exclude' or s[0] == '-':
+                    self.FilterRuleList.append(ExcludeFilter(s[1]));
 
-    def __str__():
+    def __str__(self):
         '''
         iterate over filter list and return newline separated string of filters
         '''
-        pass
+        return '\n'.join(map(str,self.FilterRuleList))
 
     def apply(self, path, stat):
         '''
         iterate over filter list and check match (filtered in/out)
         '''
-        pass
+        for rule in self.FilterRuleList:
+            if rule.match(path, stat):
+                if isinstance(rule, IncludeFilter):
+                    return True
+                elif isinstance(rule, ExcludeFilter):
+                    return False
+        return True
 
 class FilterRule(object):
     def __init__(self, pattern):
@@ -108,13 +122,20 @@ class FilterRule(object):
 
 class ExcludeFilter(FilterRule):
     def __init__(self, pattern):
-        super(Derived, self).__init__(pattern)
+        super(ExcludeFilter, self).__init__(pattern)
 
     def match(self, path, stat):
-        super(Derived, self).match(path, stat)
+        return super(ExcludeFilter, self).match(path, stat)
+
+    def __str__(self):
+        return 'exclude ' + self.exp
 
 class IncludeFilter(FilterRule):
     def __init__(self, pattern):
-        super(Derived, self).__init__(pattern)
+        super(IncludeFilter, self).__init__(pattern)
+
     def match(self, path, stat):
-        super(Derived, self).match(path, stat)
+        return super(IncludeFilter, self).match(path, stat)
+
+    def __str__(self):
+        return 'include ' + self.exp
