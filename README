@@ -9,3 +9,5 @@ Development dependencies:
  * mock (python-mock package)
  * coverage (python-coverage package)
  * cc.py and pygenie.py (bundled in the tools directory, but not under the GPLv3)
+ * gettext
+ * Spanish translation files (language-pack-gnome-es package)

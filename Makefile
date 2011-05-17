@@ -1,4 +1,5 @@
-PYFILES := $(shell find -name '*.py')
+PYFILES := $(shell find rsyncconfig/ -name '*.py') bin/rsyncconfig
+UIFILES := $(shell find data/ui/ -name '*.ui')
 LINTOPTS := --funcdoc --classdoc --changetypes --unreachable --privatevar
 COVERAGE_REPORT_FLAGS := --omit=/usr,tools/
 
@@ -6,19 +7,46 @@ COVERAGE_REPORT_FLAGS := --omit=/usr,tools/
 COVERAGE := tools/coverage
 PYGENIE := tools/pygenie.py
 
-test: .lint .coverage
+default: test
 
 ## Internationalization ##
+LANGS := en_US es
+POTFILE := data/locale/messages.pot
+POFILES := $(foreach lang,$(LANGS),data/locale/$(lang).po)
+MOFILES := $(POFILES:%.po=%/LC_MESSAGES/rsyncconfig.mo)
+
+i18n: $(POTFILE) $(POFILES) $(MOFILES)
+
+# Generate the template .pot file
+$(POTFILE): $(PYFILES) $(UIFILES:%.ui=%.ui.h)
+	mkdir -p $(dir $@)
+	xgettext -k_ -kN_ -o $@ $^
+
+# Create or update a .po file for a language
+%.po: $(POTFILE)
+	( if [ -f $@ ] ; then \
+	    msgmerge -U $@ $< ; \
+	  else \
+	    msginit -i $< -o $@ --no-translator --locale $(basename $(notdir $@)) ; \
+	  fi )
+
+# Compile .po files into .mo binary files
+%/LC_MESSAGES/rsyncconfig.mo: %.po
+	mkdir -p $(dir $@)
+	msgfmt $< -o $@
+
 %.ui.h: %.ui
 	intltool-extract --type=gettext/glade $<
 
 ## Testing and code metrics ##
+test: .lint .coverage
+
 .lint: $(PYFILES)
 	pychecker $(LINTOPTS) $*
 	touch .lint
 
 # Run the tests via coverage
-.coverage: $(PYFILES)
+.coverage: $(PYFILES) $(MOFILES)
 	@$(COVERAGE) run tools/run_tests.py
 
 show-coverage: .coverage
@@ -53,3 +81,4 @@ metrics-full: show-coverage complexity cloc commentsmethod
 clean:
 	rm -f *.pyc **/*.pyc *.pyo **/*.pyo
 	rm -f .lint .coverage
+	rm -f $(MOFILES) data/ui/*.ui.h

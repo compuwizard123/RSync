@@ -1,3 +1,5 @@
+# coding: utf-8
+
 # Copyright (C) 2011 Thomas W. Most
 #
 # This program is free software: you can redistribute it and/or modify
@@ -20,6 +22,7 @@ import unittest
 
 from .. import gui
 
+
 class TestLoadGUI(unittest.TestCase):
     def test_load(self):
         '''Simple sanity check on the loading process
@@ -34,5 +37,37 @@ class TestLoadGUI(unittest.TestCase):
         self.assertFalse(None is builder.get_object('main_statusbar'))
         self.assertFalse(None is builder.get_object('aboutdialog'))
 
+
+class TestGUI(unittest.TestCase):
+    def setUp(self):
+        '''Create the Application instance under test
+        '''
+        gui.init_i18n('en_US.UTF-8')
+        self.rct = gui.Application('.')
+
+    def test_window_exists(self):
+        '''Check that the GTK+ window was created
+        '''
+        self.assertIsNotNone(self.rct.window)
+
+
+class TestSpanishTranslation(unittest.TestCase):
+    def setUp(self):
+        '''Create the Application instance under test
+        '''
+        gui.init_i18n('es_ES.UTF-8')
+        self.rct = gui.Application('.')
+
+    def test_window_title(self):
+        self.assertEqual('herramienta de configuración de rsync', self.rct.window.get_title())
+
+    # TODO: Add more tests
+
+
 def get_suite():
-    return unittest.TestLoader().loadTestsFromTestCase(TestLoadGUI)
+    loader = unittest.TestLoader()
+    return unittest.TestSuite([
+        loader.loadTestsFromTestCase(TestLoadGUI),
+        loader.loadTestsFromTestCase(TestGUI),
+        loader.loadTestsFromTestCase(TestSpanishTranslation),
+    ])

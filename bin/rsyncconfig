@@ -15,23 +15,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import os
 import sys
-import locale
-import gettext
+sys.path.append('../')
 
 import pygtk; pygtk.require('2.0')
 import gtk
 
-from rsyncconfig import GETTEXT_DOMAIN, get_pofile_dir
-
-# Initialize i18n machinery
-locale.setlocale(locale.LC_ALL, '')
-locale.bindtextdomain(GETTEXT_DOMAIN, get_pofile_dir())
-gettext.bindtextdomain(GETTEXT_DOMAIN, get_pofile_dir())
-gettext.textdomain(GETTEXT_DOMAIN)
-
-def main():
-	pass
+from rsyncconfig.gui import Application
 
 if __name__ == '__main__':
-	main()
+	Application(os.getcwd()).main(sys.argv)
