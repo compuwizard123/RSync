@@ -36,6 +36,9 @@ def init_i18n(lang=None):
     locale.bindtextdomain(GETTEXT_DOMAIN, get_pofile_dir())
     gettext.bindtextdomain(GETTEXT_DOMAIN, get_pofile_dir())
     gettext.textdomain(GETTEXT_DOMAIN)
+    lang2 = gettext.translation(GETTEXT_DOMAIN, get_pofile_dir())
+    _ = lang2.gettext
+    gettext.install(GETTEXT_DOMAIN, get_pofile_dir())
 
 
 def load_gui():

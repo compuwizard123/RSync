@@ -18,4 +18,4 @@ GETTEXT_DOMAIN = 'rsyncconfig'
 def get_pofile_dir():
     '''Get the directory in which gettext PO files are stored
     '''
-    return "data/po"
+    return "data/locale"
