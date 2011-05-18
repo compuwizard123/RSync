@@ -59,7 +59,7 @@ class TestSpanishTranslation(unittest.TestCase):
         self.rct = gui.Application('.')
 
     def test_window_title(self):
-        self.assertEqual('herramienta de configuración de rsync', self.rct.window.get_title())
+        self.assertEqual('Herramienta de configuracion de rsync', self.rct.window.get_title())
 
     # TODO: Add more tests
 

@@ -10,7 +10,7 @@ PYGENIE := tools/pygenie.py
 default: test
 
 ## Internationalization ##
-LANGS := en_US es
+LANGS := en_US es_ES
 POTFILE := data/locale/messages.pot
 POFILES := $(foreach lang,$(LANGS),data/locale/$(lang).po)
 MOFILES := $(POFILES:%.po=%/LC_MESSAGES/rsyncconfig.mo)
