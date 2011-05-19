@@ -149,11 +149,20 @@ class TestFileMenus(GUITestCase):
         self.assertEqual('include foo\nexclude bar',
                          str(self.app.filters), 'Read file correctly')
 
-    @unittest.skip("Haven't mocked save dialog yet")
     def test_file_save_unsaved(self):
-        self.assertTrue(self.app.filter_file is None, 'Not yet saved')
-        self.objects.file_save_menu_item.activate()
-        # XXX: How to mock the dialog?
+        filter_fn = os.path.join(self.test_dir, 'new_filter_file')
+        chooser = mock.Mock(spec=gtk.FileChooserDialog)
+        chooser.get_filename.return_value = filter_fn
+
+        with mock.patch('gtk.FileChooserDialog') as FCD:
+            FCD.return_value = chooser
+
+            self.assertTrue(self.app.filter_file is None, 'Not yet saved')
+            self.objects.file_save_menu_item.activate()
+
+            FCD.assert_called_with(title='Save filter file...',
+                                   parent=self.app.window)
+        self.assertTrue(os.path.exists(filter_fn), 'File created')
 
     def test_file_save_again(self):
         filter_fn = os.path.join(self.test_dir, 'filter_file')
