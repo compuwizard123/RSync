@@ -299,7 +299,15 @@ Eric A. Henderson</property>
               </packing>
             </child>
             <child>
-              <placeholder/>
+              <object class="GtkTextView" id="filter_textview">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="editable">False</property>
+              </object>
+              <packing>
+                <property name="resize">True</property>
+                <property name="shrink">True</property>
+              </packing>
             </child>
           </object>
           <packing>
