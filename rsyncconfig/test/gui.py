@@ -119,6 +119,9 @@ class TestBasicGUIOperations(GUITestCase):
 
 class TestFileMenus(GUITestCase):
     '''Test the items in the File menu
+
+    See the docstrings for the activation handlers (in the Application class)
+    for information on what they are supposed to do.
     '''
     test_dir_tree = {
         'filter_file': 'include foo\nexclude bar',
@@ -134,8 +137,11 @@ class TestFileMenus(GUITestCase):
     @unittest.skip("Haven't mocked open dialog yet")
     def test_file_open(self):
         #self.app.builder.get_object('file_open_menu_item').activate()
-        # XXX: How to mock the dialog?  Tell it to open this file:
+        # XXX: How to mock the dialog?  We can't just patch the method call
+        # because it is called from C.  Tell it to open this file:
         filter_fn = os.path.join(self.test_dir, 'filter_file')
+        self.assertEqual('include foo\nexclude bar',
+                         str(self.app.filters), 'Read file correctly')
 
     @unittest.skip("Haven't mocked save dialog yet")
     def test_file_save_unsaved(self):
@@ -163,8 +169,18 @@ class TestFileMenus(GUITestCase):
         with open(filter_fn2, 'rb') as f:
             self.assertEqual('', f.read(), 'New file created empty')
 
+    @unittest.skip("Haven't mocked save as dialog yet")
     def test_file_save_as(self):
-        pass
+        self.objects.file_save_as_menu_item.activate()
+        # XXX: How to mock the save as dialog?
+
+    def test_file_quit(self):
+        '''Check that the GTK+ main loop is terminated when the application is quit
+        '''
+        with mock.patch('gtk.main_quit') as main_quit:
+            self.objects.file_quit_menu_item.activate()
+            gtk_spin()
+            main_quit.assert_called_once_with()
 
 
 class TestSpanishTranslation(unittest.TestCase):
