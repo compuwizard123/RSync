@@ -25,7 +25,8 @@ $(POTFILE): $(PYFILES) $(UIFILES:%.ui=%.ui.h)
 # Create or update a .po file for a language
 %.po: $(POTFILE)
 	( if [ -f $@ ] ; then \
-	    msgmerge -U $@ $< ; \
+	    msgmerge -U $@ $< && \
+	    touch $@ ; \
 	  else \
 	    msginit -i $< -o $@ --no-translator --locale $(basename $(notdir $@)) ; \
 	  fi )
