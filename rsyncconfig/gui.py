@@ -96,17 +96,19 @@ class Application(object):
             chooser.run()
             self.filter_file = chooser.get_filename()
 
-        if self.filter_file is None:
-            # No file to save to
-            return
-
-        with open(self.filter_file, 'wb+') as f:
-            f.write(str(self.filters))
+        if self.filter_file is not None:
+            self.save()
 
     def on_file_save_as_menu_item_activate(self, menu_item):
         '''Display a dialog to save the current filter file under a new name
         '''
-        pass
+        chooser = gtk.FileChooserDialog(title=_('Save filter file as...'),
+                                        parent=self.window)
+        chooser.run()
+        fn = chooser.get_filename()
+        if fn is not None:
+            self.filter_file = fn
+            self.save()
 
     def on_file_quit_menu_item_activate(self, menu_item):
         '''Exit the application when quit is selected in the menu
@@ -126,3 +128,9 @@ class Application(object):
     def main(self, argv):
         self.window.show()
         gtk.main()
+
+    def save(self):
+        '''Save to the filter file
+        '''
+        with open(self.filter_file, 'wb+') as f:
+            f.write(str(self.filters))

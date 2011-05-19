@@ -172,14 +172,17 @@ class TestFileMenus(GUITestCase):
 
     def test_file_save_as(self):
         filter_fn = os.path.join(self.test_dir, 'new_filter_fn')
-        mock_dialog = mock.Mock('GtkFileChooserDialog')
-        mock_dialog.get_filename = mock.Mock(return_value=filter_fn)
+        mock_dialog = mock.Mock(spec=gtk.FileChooserDialog)
+        mock_dialog.get_filename.return_value = filter_fn
 
         with mock.patch('gtk.FileChooserDialog') as FCD:
-            self.objects.file_save_as_menu_item.activate()
             FCD.return_value = mock_dialog
+
+            self.objects.file_save_as_menu_item.activate()
             gtk_spin()
-            FCD.assert_called_once_with(title='Save filter file as...')
+
+            FCD.assert_called_once_with(title='Save filter file as...',
+                                        parent=self.app.window)
 
         with open(filter_fn, 'rb') as f:
             self.assertEqual('', f.read(), 'Created file at correct location')
