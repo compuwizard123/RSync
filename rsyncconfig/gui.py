@@ -97,7 +97,7 @@ class Application(object):
         under a new name.
         '''
         if self.filter_file is None:
-            chooser = gtk.FileChooserDialog(title=_('Save filter file'),
+            chooser = gtk.FileChooserDialog(title=_('Save filter file...'),
                                             parent=self.window)
             chooser.run()
             self.filter_file = chooser.get_filename()
