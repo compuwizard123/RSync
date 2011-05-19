@@ -113,7 +113,7 @@ class GUITestCase(unittest.TestCase):
     def get_filter_textview_contents(self):
         '''Get the textual contents of the filter_textview widget
         '''
-        textbuffer = self.objects.filter_textview.get_textbuffer()
+        textbuffer = self.objects.filter_textview.get_buffer()
         return textbuffer.get_text(textbuffer.get_start_iter(),
                                    textbuffer.get_end_iter())
 

@@ -65,6 +65,7 @@ class Application(object):
         self.root_select_button = None
         # File the filters are saved to, or None if not yet saved
         self.filter_file = None
+        self.filter_view = self.builder.get_object('filter_textview')
         self.filters = FilterRuleset('')
         self.tree = None
         self.fs_tree_view = None
@@ -140,7 +141,9 @@ class Application(object):
         '''Read the filter file
         '''
         with open(self.filter_file, 'rb') as f:
-            self.filters = FilterRuleset(f.read())
+            text = f.read()
+        self.filters = FilterRuleset(text)
+        self.filter_view.get_buffer().set_text(text)
 
     def save(self):
         '''Save to the filter file
