@@ -1,7 +1,7 @@
 PYFILES := $(shell find rsyncconfig/ -name '*.py')
 UIFILES := $(shell find data/ui/ -name '*.ui')
 LINTOPTS := --funcdoc --classdoc --changetypes --unreachable --privatevar
-COVERAGE_REPORT_FLAGS := --omit=/usr/*,./tools/*
+COVERAGE_REPORT_FLAGS := --omit=/usr/,./tools/
 GETTEXT_DOMAIN := rsyncconfig
 
 ## Tool binary locations
