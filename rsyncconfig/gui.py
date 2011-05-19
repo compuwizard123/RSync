@@ -19,7 +19,10 @@ import gettext
 
 import gtk
 
-from rsyncconfig import GETTEXT_DOMAIN, get_pofile_dir
+from . import GETTEXT_DOMAIN, get_pofile_dir
+from .filter import FilterRuleset
+from .fstree import FSTree
+from .spider import Spider
 
 
 def init_i18n(lang=None):
@@ -61,7 +64,7 @@ class Application(object):
         self.root_select_button = None
         # File the filters are saved to, or None if not yet saved
         self.filter_file = None
-        self.filters = None
+        self.filters = FilterRuleset('')
         self.tree = None
         self.fs_tree_view = None
         self.spider = None
@@ -87,7 +90,18 @@ class Application(object):
         If the filter file has not yet been saved, display a dialog to save it
         under a new name.
         '''
-        pass
+        if self.filter_file is None:
+            chooser = gtk.FileChooserDialog(title=_('Save filter file'),
+                                            parent=self.window)
+            chooser.run()
+            self.filter_file = chooser.get_filename()
+
+        if self.filter_file is None:
+            # No file to save to
+            return
+
+        with open(self.filter_file, 'wb+') as f:
+            f.write(str(self.filters))
 
     def on_file_save_as_menu_item_activate(self, menu_item):
         '''Display a dialog to save the current filter file under a new name
@@ -97,7 +111,7 @@ class Application(object):
     def on_file_quit_menu_item_activate(self, menu_item):
         '''Exit the application when quit is selected in the menu
         '''
-        pass
+        gtk.main_quit()
 
     def on_help_about_menu_item_activate(self, menu_item):
         '''Display the About dialog

@@ -24,6 +24,7 @@ import tempfile
 import unittest
 
 import gtk
+import mock
 
 from .. import gui
 
