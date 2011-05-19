@@ -45,7 +45,7 @@ Eric A. Henderson</property>
   <object class="GtkWindow" id="main_window">
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">rsync Config Tool</property>
-    <signal name="destroy" handler="main_window_destroy_cb" swapped="no"/>
+    <signal name="destroy" handler="on_main_window_destroy" swapped="no"/>
     <child>
       <object class="GtkVBox" id="vbox1">
         <property name="visible">True</property>
@@ -66,43 +66,47 @@ Eric A. Henderson</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
-                      <object class="GtkImageMenuItem" id="imagemenuitem1">
+                      <object class="GtkImageMenuItem" id="file_new_menu_item">
                         <property name="label">gtk-new</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_action_appearance">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
+                        <signal name="activate" handler="on_file_new_menu_item_activate" swapped="no"/>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="imagemenuitem2">
+                      <object class="GtkImageMenuItem" id="file_open_menu_item">
                         <property name="label">gtk-open</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_action_appearance">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
+                        <signal name="activate" handler="on_file_open_menu_item_activate" swapped="no"/>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="imagemenuitem3">
+                      <object class="GtkImageMenuItem" id="file_save_menu_item">
                         <property name="label">gtk-save</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_action_appearance">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
+                        <signal name="activate" handler="on_file_save_menu_item_activate" swapped="no"/>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="imagemenuitem4">
+                      <object class="GtkImageMenuItem" id="file_save_as_menu_item">
                         <property name="label">gtk-save-as</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_action_appearance">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
+                        <signal name="activate" handler="on_file_save_as_menu_item_activate" swapped="no"/>
                       </object>
                     </child>
                     <child>
@@ -112,13 +116,14 @@ Eric A. Henderson</property>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="imagemenuitem5">
+                      <object class="GtkImageMenuItem" id="file_quit_menu_item">
                         <property name="label">gtk-quit</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_action_appearance">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
+                        <signal name="activate" handler="on_file_quit_menu_item_activate" swapped="no"/>
                       </object>
                     </child>
                   </object>
@@ -127,7 +132,6 @@ Eric A. Henderson</property>
             </child>
             <child>
               <object class="GtkMenuItem" id="menuitem2">
-                <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">_Edit</property>
@@ -182,7 +186,6 @@ Eric A. Henderson</property>
             </child>
             <child>
               <object class="GtkMenuItem" id="menuitem3">
-                <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">_View</property>
@@ -201,13 +204,14 @@ Eric A. Henderson</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
-                      <object class="GtkImageMenuItem" id="imagemenuitem10">
+                      <object class="GtkImageMenuItem" id="help_about_menu_item">
                         <property name="label">gtk-about</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_action_appearance">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
+                        <signal name="activate" handler="on_help_about_menu_item_activate" swapped="no"/>
                       </object>
                     </child>
                   </object>

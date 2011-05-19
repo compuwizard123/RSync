@@ -59,10 +59,43 @@ class Application(object):
         self.window = builder.get_object('main_window')
         builder.connect_signals(self)
 
-    def main_window_destroy_cb(self, window):
+    def on_main_window_destroy(self, window):
         '''When the main window is closed, terminate the mainloop
         '''
         gtk.main_quit()
+
+    def on_file_new_menu_item_activate(self, menu_item):
+        '''Create a new, empty filter file
+        '''
+        pass
+
+    def on_file_open_menu_item_activate(self, menu_item):
+        '''Display a dialog to open a new filter file
+        '''
+        pass
+
+    def on_file_save_menu_item_activate(self, menu_item):
+        '''Save the current filter file
+
+        If the filter file has not yet been saved, display a dialog to save it
+        under a new name.
+        '''
+        pass
+
+    def on_file_save_as_menu_item_activate(self, menu_item):
+        '''Display a dialog to save the current filter file under a new name
+        '''
+        pass
+
+    def on_file_quit_menu_item_activate(self, menu_item):
+        '''Exit the application when quit is selected in the menu
+        '''
+        pass
+
+    def on_help_about_menu_item_activate(self, menu_item):
+        '''Display the About dialog
+        '''
+        pass
 
     def main(self, argv):
         self.window.show()
