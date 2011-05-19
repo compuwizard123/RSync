@@ -110,6 +110,12 @@ class GUITestCase(unittest.TestCase):
                 os.mkdir(path)
                 self._populate_test_dir(path, value)
 
+    def get_filter_textview_contents(self):
+        '''Get the textual contents of the filter_textview widget
+        '''
+        textbuffer = self.objects.filter_textview.get_textbuffer()
+        return textbuffer.get_text(textbuffer.get_start_iter(),
+                                   textbuffer.get_end_iter())
 
 class TestBasicGUIOperations(GUITestCase):
     def test_window_exists(self):
@@ -142,6 +148,7 @@ class TestFileMenus(GUITestCase):
         self.objects.file_new_menu_item.activate()
         gtk_spin()
         self.assertEqual('', str(self.app.filters))
+        self.assertEqual('', self.get_filter_textview_contents())
 
     def test_file_open(self):
         filter_fn = os.path.join(self.test_dir, 'filter_file')
@@ -156,6 +163,8 @@ class TestFileMenus(GUITestCase):
 
         self.assertEqual('include foo\nexclude bar',
                          str(self.app.filters), 'Read file correctly')
+        self.assertEqual('include foo\nexclude bar',
+                         self.get_filter_textview_contents(), 'Contents displayed')
 
     def test_file_save_unsaved(self):
         filter_fn = os.path.join(self.test_dir, 'new_filter_file')
