@@ -79,7 +79,8 @@ class Application(object):
     def on_file_new_menu_item_activate(self, menu_item):
         '''Create a new, empty filter file
         '''
-        pass
+        self.filter_file = None
+        self.read()
 
     def on_file_open_menu_item_activate(self, menu_item):
         '''Display a dialog to open a new filter file
@@ -89,11 +90,10 @@ class Application(object):
                                         parent=self.window,
                                         buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
                                                  gtk.STOCK_OPEN, gtk.RESPONSE_OK))
-        chooser.run()
-        fn = chooser.get_filename()
-        if fn is not None:
-            self.filter_file = fn
+        if chooser.run() == gtk.RESPONSE_OK:
+            self.filter_file = chooser.get_filename()
             self.read()
+        chooser.destroy()
 
     def on_file_save_menu_item_activate(self, menu_item):
         '''Save the current filter file
@@ -107,9 +107,9 @@ class Application(object):
                                             parent=self.window,
                                             buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
                                                      gtk.STOCK_OPEN, gtk.RESPONSE_OK))
-            chooser.run()
-            self.filter_file = chooser.get_filename()
-
+            if chooser.run() == gtk.RESPONSE_OK:
+                self.filter_file = chooser.get_filename()
+            chooser.destroy()
         if self.filter_file is not None:
             self.save()
 
@@ -121,11 +121,10 @@ class Application(object):
                                         parent=self.window,
                                         buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
                                                  gtk.STOCK_OPEN, gtk.RESPONSE_OK))
-        chooser.run()
-        fn = chooser.get_filename()
-        if fn is not None:
-            self.filter_file = fn
+        if chooser.run() == gtk.RESPONSE_OK:
+            self.filter_file = chooser.get_filename()
             self.save()
+        chooser.destroy()
 
     def on_file_quit_menu_item_activate(self, menu_item):
         '''Exit the application when quit is selected in the menu
@@ -149,8 +148,11 @@ class Application(object):
     def read(self):
         '''Read the filter file
         '''
-        with open(self.filter_file, 'rb') as f:
-            text = f.read()
+        if self.filter_file is not None:
+            with open(self.filter_file, 'rb') as f:
+                text = f.read()
+        else:
+            text = ''
         self.filters = FilterRuleset(text)
         self.filter_view.get_buffer().set_text(text)
 

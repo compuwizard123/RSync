@@ -154,6 +154,7 @@ class TestFileMenus(GUITestCase):
         filter_fn = os.path.join(self.test_dir, 'filter_file')
         fcd = mock.Mock(spec=gtk.FileChooserDialog)
         fcd.get_filename.return_value = filter_fn
+        fcd.run.return_value = gtk.RESPONSE_OK
 
         with mock.patch('gtk.FileChooserDialog') as FCD:
             FCD.return_value = fcd
@@ -164,6 +165,7 @@ class TestFileMenus(GUITestCase):
                                    buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
                                             gtk.STOCK_OPEN, gtk.RESPONSE_OK))
 
+        fcd.destroy.assert_called_once_with()
         self.assertEqual('include foo\nexclude bar',
                          str(self.app.filters), 'Read file correctly')
         self.assertEqual('include foo\nexclude bar',
@@ -173,6 +175,7 @@ class TestFileMenus(GUITestCase):
         filter_fn = os.path.join(self.test_dir, 'new_filter_file')
         chooser = mock.Mock(spec=gtk.FileChooserDialog)
         chooser.get_filename.return_value = filter_fn
+        chooser.run.return_value = gtk.RESPONSE_OK
 
         with mock.patch('gtk.FileChooserDialog') as FCD:
             FCD.return_value = chooser
@@ -185,6 +188,7 @@ class TestFileMenus(GUITestCase):
                                    parent=self.app.window,
                                    buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
                                             gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+        chooser.destroy.assert_called_once_with() # Dialog is closed
         self.assertTrue(os.path.exists(filter_fn), 'File created')
 
     def test_file_save_again(self):
@@ -211,6 +215,7 @@ class TestFileMenus(GUITestCase):
         filter_fn = os.path.join(self.test_dir, 'new_filter_fn')
         mock_dialog = mock.Mock(spec=gtk.FileChooserDialog)
         mock_dialog.get_filename.return_value = filter_fn
+        mock_dialog.run.return_value = gtk.RESPONSE_OK
 
         with mock.patch('gtk.FileChooserDialog') as FCD:
             FCD.return_value = mock_dialog
@@ -223,6 +228,7 @@ class TestFileMenus(GUITestCase):
                                         parent=self.app.window,
                                         buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
                                                  gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+            mock_dialog.destroy.assert_called_once_with()
 
         with open(filter_fn, 'rb') as f:
             self.assertEqual('', f.read(), 'Created file at correct location')
