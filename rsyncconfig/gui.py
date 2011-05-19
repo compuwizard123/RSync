@@ -53,10 +53,11 @@ def load_gui():
 
 
 class Application(object):
-    def __init__(self, base_dir):
+    def __init__(self):
         builder = load_gui()
-        self.base_dir = base_dir
         self.window = builder.get_object('main_window')
+        self.fs_tree_view = None
+        self.root_select_button = None
         builder.connect_signals(self)
 
     def on_main_window_destroy(self, window):
@@ -94,6 +95,11 @@ class Application(object):
 
     def on_help_about_menu_item_activate(self, menu_item):
         '''Display the About dialog
+        '''
+        pass
+
+    def on_rootselect_filechooserbutton_file_set(self, button):
+        '''Change the directory tree displayed to the one selected
         '''
         pass
 
