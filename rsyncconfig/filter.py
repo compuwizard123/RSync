@@ -18,38 +18,39 @@ import regex
 from stat import *
 
 class FilterRuleset(object):
-    #first matching pattern is acted on
-    FilterRuleList = [];
-
     def __init__(self, filters):
         '''
         split string and store in list of FilterRules
         '''
-        self.FilterRuleList = [];
+        self.rules = [];
         for s in filters.splitlines():
-            s = s.split(' ');
-            if len(s) == 2:
-                if s[0] == 'include' or s[0] == '+':
-                    self.FilterRuleList.append(IncludeFilter(s[1]));
-                elif s[0] == 'exclude' or s[0] == '-':
-                    self.FilterRuleList.append(ExcludeFilter(s[1]));
+            secs = s.split(' ', 1)
+            if len(secs) == 2:
+                if secs[0] == 'include':
+                    self.rules.append(IncludeFilter(secs[1]))
+                elif secs[0] == '+':
+                    self.rules.append(PlusFilter(secs[1]))
+                elif secs[0] == 'exclude':
+                    self.rules.append(ExcludeFilter(secs[1]))
+                elif secs[0] == '-':
+                    self.rules.append(MinusFilter(secs[1]))
+                else:
+                    self.rules.append(NullFilter(s))
 
     def __str__(self):
         '''
         iterate over filter list and return newline separated string of filters
         '''
-        return '\n'.join(map(str,self.FilterRuleList))
+        return '\n'.join(map(str, self.rules))
 
     def apply(self, path, stat):
         '''
         iterate over filter list and check match (filtered in/out)
         '''
-        for rule in self.FilterRuleList:
-            if rule.match(path, stat):
-                if isinstance(rule, IncludeFilter):
-                    return True
-                elif isinstance(rule, ExcludeFilter):
-                    return False
+        for rule in self.rules:
+             match, result = rule.apply(path, stat)
+             if match:
+                return result
         return True
 
 class FilterRule(object):
@@ -120,22 +121,39 @@ class FilterRule(object):
         regexp = regex.compile(exp, flags=regex.DOTALL | regex.MULTILINE)
         return bool(regexp.search(path))
 
-class ExcludeFilter(FilterRule):
-    def __init__(self, pattern):
-        super(ExcludeFilter, self).__init__(pattern)
+    def apply(self, path, stat):
+        return False, False
 
-    def match(self, path, stat):
-        return super(ExcludeFilter, self).match(path, stat)
+    def __str__(self):
+        return self.exp
+
+class ExcludeFilter(FilterRule):
+    def apply(self, path, stat):
+        if self.match(path, stat):
+            return True, False
+        else:
+            return False, True
 
     def __str__(self):
         return 'exclude ' + self.exp
 
-class IncludeFilter(FilterRule):
-    def __init__(self, pattern):
-        super(IncludeFilter, self).__init__(pattern)
+class MinusFilter(ExcludeFilter):
+    def __str__(self):
+        return '- ' + self.exp
 
-    def match(self, path, stat):
-        return super(IncludeFilter, self).match(path, stat)
+class IncludeFilter(FilterRule):
+    def apply(self, path, stat):
+        if self.match(path, stat):
+            return True, True
+        else:
+            return False, False
 
     def __str__(self):
         return 'include ' + self.exp
+
+class PlusFilter(IncludeFilter):
+    def __str__(self):
+        return '+ ' + self.exp
+
+class NullFilter(FilterRule):
+    pass
