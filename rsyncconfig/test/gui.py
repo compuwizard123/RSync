@@ -48,7 +48,7 @@ class TestGUI(unittest.TestCase):
     def test_window_exists(self):
         '''Check that the GTK+ window was created
         '''
-        self.assertIsNotNone(self.rct.window)
+        self.assertNotEqual(self.rct.window, None)
 
 
 class TestSpanishTranslation(unittest.TestCase):
