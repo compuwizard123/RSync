@@ -1,7 +1,7 @@
 PYFILES := $(shell find rsyncconfig/ -name '*.py')
 UIFILES := $(shell find data/ui/ -name '*.ui')
 LINTOPTS := --funcdoc --classdoc --changetypes --unreachable --privatevar
-COVERAGE_REPORT_FLAGS := --omit=/usr,tools/
+COVERAGE_REPORT_FLAGS := --omit=/usr/*,./tools/*
 
 ## Tool binary locations
 COVERAGE := tools/coverage
@@ -46,7 +46,7 @@ test: .lint .coverage
 	touch .lint
 
 # Run the tests via coverage
-.coverage: $(PYFILES) $(MOFILES)
+.coverage: $(PYFILES) #$(MOFILES)
 	@$(COVERAGE) run tools/run_tests.py
 
 show-coverage: .coverage
