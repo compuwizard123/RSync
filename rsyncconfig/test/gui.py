@@ -170,10 +170,19 @@ class TestFileMenus(GUITestCase):
         with open(filter_fn2, 'rb') as f:
             self.assertEqual('', f.read(), 'New file created empty')
 
-    @unittest.skip("Haven't mocked save as dialog yet")
     def test_file_save_as(self):
-        self.objects.file_save_as_menu_item.activate()
-        # XXX: How to mock the save as dialog?
+        filter_fn = os.path.join(self.test_dir, 'new_filter_fn')
+        mock_dialog = mock.Mock('GtkFileChooserDialog')
+        mock_dialog.get_filename = mock.Mock(return_value=filter_fn)
+
+        with mock.patch('gtk.FileChooserDialog') as FCD:
+            self.objects.file_save_as_menu_item.activate()
+            FCD.return_value = mock_dialog
+            gtk_spin()
+            FCD.assert_called_once_with(title='Save filter file as...')
+
+        with open(filter_fn, 'rb') as f:
+            self.assertEqual('', f.read(), 'Created file at correct location')
 
     def test_file_quit(self):
         '''Check that the GTK+ main loop is terminated when the application is quit
