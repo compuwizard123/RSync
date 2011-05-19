@@ -54,11 +54,17 @@ def load_gui():
 
 class Application(object):
     def __init__(self):
-        builder = load_gui()
-        self.window = builder.get_object('main_window')
-        self.fs_tree_view = None
+        self.builder = load_gui()
+        self.builder.connect_signals(self)
+
+        self.window = self.builder.get_object('main_window')
         self.root_select_button = None
-        builder.connect_signals(self)
+        # File the filters are saved to, or None if not yet saved
+        self.filter_file = None
+        self.filters = None
+        self.tree = None
+        self.fs_tree_view = None
+        self.spider = None
 
     def on_main_window_destroy(self, window):
         '''When the main window is closed, terminate the mainloop
