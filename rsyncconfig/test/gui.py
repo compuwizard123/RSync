@@ -158,8 +158,11 @@ class TestFileMenus(GUITestCase):
         with mock.patch('gtk.FileChooserDialog') as FCD:
             FCD.return_value = fcd
             self.objects.file_open_menu_item.activate()
-            FCD.assert_called_with(title='Open filter file...',
-                                   parent=self.app.window)
+            FCD.assert_called_with(title=None,
+                                   action=gtk.FILE_CHOOSER_ACTION_OPEN,
+                                   parent=self.app.window,
+                                   buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
+                                            gtk.STOCK_OPEN, gtk.RESPONSE_OK))
 
         self.assertEqual('include foo\nexclude bar',
                          str(self.app.filters), 'Read file correctly')
@@ -177,8 +180,11 @@ class TestFileMenus(GUITestCase):
             self.assertTrue(self.app.filter_file is None, 'Not yet saved')
             self.objects.file_save_menu_item.activate()
 
-            FCD.assert_called_with(title='Save filter file...',
-                                   parent=self.app.window)
+            FCD.assert_called_with(title=None,
+                                   action=gtk.FILE_CHOOSER_ACTION_SAVE,
+                                   parent=self.app.window,
+                                   buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
+                                            gtk.STOCK_OPEN, gtk.RESPONSE_OK))
         self.assertTrue(os.path.exists(filter_fn), 'File created')
 
     def test_file_save_again(self):
@@ -212,8 +218,11 @@ class TestFileMenus(GUITestCase):
             self.objects.file_save_as_menu_item.activate()
             gtk_spin()
 
-            FCD.assert_called_once_with(title='Save filter file as...',
-                                        parent=self.app.window)
+            FCD.assert_called_once_with(title=None,
+                                        action=gtk.FILE_CHOOSER_ACTION_SAVE,
+                                        parent=self.app.window,
+                                        buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
+                                                 gtk.STOCK_OPEN, gtk.RESPONSE_OK))
 
         with open(filter_fn, 'rb') as f:
             self.assertEqual('', f.read(), 'Created file at correct location')
