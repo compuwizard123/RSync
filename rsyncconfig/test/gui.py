@@ -135,12 +135,17 @@ class TestFileMenus(GUITestCase):
         gtk_spin()
         self.assertEqual('', str(self.app.filters))
 
-    @unittest.skip("Haven't mocked open dialog yet")
     def test_file_open(self):
-        #self.app.builder.get_object('file_open_menu_item').activate()
-        # XXX: How to mock the dialog?  We can't just patch the method call
-        # because it is called from C.  Tell it to open this file:
         filter_fn = os.path.join(self.test_dir, 'filter_file')
+        fcd = mock.Mock(spec=gtk.FileChooserDialog)
+        fcd.get_filename.return_value = filter_fn
+
+        with mock.patch('gtk.FileChooserDialog') as FCD:
+            FCD.return_value = fcd
+            self.objects.file_open_menu_item.activate()
+            FCD.assert_called_with(title='Open filter file...',
+                                   parent=self.app.window)
+
         self.assertEqual('include foo\nexclude bar',
                          str(self.app.filters), 'Read file correctly')
 
