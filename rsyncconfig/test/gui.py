@@ -117,6 +117,14 @@ class TestBasicGUIOperations(GUITestCase):
         '''
         self.assertNotEqual(self.app.window, None)
 
+    def test_window_destroy_callback(self):
+        '''Check that the GTK+ mainloop ends when the window closes
+        '''
+        with mock.patch('gtk.main_quit') as main_quit:
+            self.app.window.destroy()
+            gtk_spin()
+            main_quit.assert_called_with()
+
 
 class TestFileMenus(GUITestCase):
     '''Test the items in the File menu
