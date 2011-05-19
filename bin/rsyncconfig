@@ -27,4 +27,4 @@ import gtk
 from rsyncconfig.gui import Application
 
 if __name__ == '__main__':
-	Application(os.getcwd()).main(sys.argv)
+	Application().main(sys.argv)

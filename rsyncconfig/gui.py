@@ -16,6 +16,7 @@
 import os
 import locale
 import gettext
+from gettext import gettext as _
 
 import gtk
 
