@@ -82,7 +82,13 @@ class Application(object):
     def on_file_open_menu_item_activate(self, menu_item):
         '''Display a dialog to open a new filter file
         '''
-        pass
+        chooser = gtk.FileChooserDialog(title=_('Open filter file...'),
+                                        parent=self.window)
+        chooser.run()
+        fn = chooser.get_filename()
+        if fn is not None:
+            self.filter_file = fn
+            self.read()
 
     def on_file_save_menu_item_activate(self, menu_item):
         '''Save the current filter file
@@ -128,6 +134,12 @@ class Application(object):
     def main(self, argv):
         self.window.show()
         gtk.main()
+
+    def read(self):
+        '''Read the filter file
+        '''
+        with open(self.filter_file, 'rb') as f:
+            self.filters = FilterRuleset(f.read())
 
     def save(self):
         '''Save to the filter file
