@@ -2,6 +2,7 @@ PYFILES := $(shell find rsyncconfig/ -name '*.py')
 UIFILES := $(shell find data/ui/ -name '*.ui')
 LINTOPTS := --funcdoc --classdoc --changetypes --unreachable --privatevar
 COVERAGE_REPORT_FLAGS := --omit=/usr/*,./tools/*
+GETTEXT_DOMAIN := rsyncconfig
 
 ## Tool binary locations
 COVERAGE := tools/coverage
@@ -13,7 +14,7 @@ default: test
 LANGS := en_US es_ES
 POTFILE := data/locale/messages.pot
 POFILES := $(foreach lang,$(LANGS),data/locale/$(lang).po)
-MOFILES := $(POFILES:%.po=%/LC_MESSAGES/rsyncconfig.mo)
+MOFILES := $(POFILES:%.po=%/LC_MESSAGES/$(GETTEXT_DOMAIN).mo)
 
 i18n: $(POTFILE) $(POFILES) $(MOFILES)
 
