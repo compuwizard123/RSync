@@ -57,6 +57,12 @@ class Application(object):
         builder = load_gui()
         self.base_dir = base_dir
         self.window = builder.get_object('main_window')
+        builder.connect_signals(self)
+
+    def main_window_destroy_cb(self, window):
+        '''When the main window is closed, terminate the mainloop
+        '''
+        gtk.main_quit()
 
     def main(self, argv):
         self.window.show()
