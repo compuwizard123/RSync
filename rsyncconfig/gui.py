@@ -84,8 +84,11 @@ class Application(object):
     def on_file_open_menu_item_activate(self, menu_item):
         '''Display a dialog to open a new filter file
         '''
-        chooser = gtk.FileChooserDialog(title=_('Open filter file...'),
-                                        parent=self.window)
+        chooser = gtk.FileChooserDialog(title=None,
+                                        action=gtk.FILE_CHOOSER_ACTION_OPEN,
+                                        parent=self.window,
+                                        buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
+                                                 gtk.STOCK_OPEN, gtk.RESPONSE_OK))
         chooser.run()
         fn = chooser.get_filename()
         if fn is not None:
@@ -99,8 +102,11 @@ class Application(object):
         under a new name.
         '''
         if self.filter_file is None:
-            chooser = gtk.FileChooserDialog(title=_('Save filter file...'),
-                                            parent=self.window)
+            chooser = gtk.FileChooserDialog(title=None,
+                                            action=gtk.FILE_CHOOSER_ACTION_SAVE,
+                                            parent=self.window,
+                                            buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
+                                                     gtk.STOCK_OPEN, gtk.RESPONSE_OK))
             chooser.run()
             self.filter_file = chooser.get_filename()
 
@@ -110,8 +116,11 @@ class Application(object):
     def on_file_save_as_menu_item_activate(self, menu_item):
         '''Display a dialog to save the current filter file under a new name
         '''
-        chooser = gtk.FileChooserDialog(title=_('Save filter file as...'),
-                                        parent=self.window)
+        chooser = gtk.FileChooserDialog(title=None,
+                                        action=gtk.FILE_CHOOSER_ACTION_SAVE,
+                                        parent=self.window,
+                                        buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
+                                                 gtk.STOCK_OPEN, gtk.RESPONSE_OK))
         chooser.run()
         fn = chooser.get_filename()
         if fn is not None:
