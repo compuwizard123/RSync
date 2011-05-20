@@ -248,12 +248,32 @@ class TestSpanishTranslation(unittest.TestCase):
         '''
         gui.init_i18n('es_ES.UTF-8')
         self.rct = gui.Application()
+        self.builder = gui.load_gui()
 
     def test_window_title(self):
         self.assertEqual('Herramienta de configuracion de rsync', self.rct.window.get_title())
 
-    # TODO: Add more tests
+    def test_menubar(self):
+        self.assertEqual(self.builder.get_object('menuitem1').get_child().get_text(), 'Archivo')
+        self.assertEqual(self.builder.get_object('menuitem2').get_child().get_text(), 'Editar')
+        self.assertEqual(self.builder.get_object('menuitem3').get_child().get_text(), 'Ver')
+        self.assertEqual(self.builder.get_object('menuitem4').get_child().get_text(), 'Ayuda')
 
+    def test_menu1_items(self):
+        self.assertEqual(self.builder.get_object('file_new_menu_item').get_child().get_text(), 'Nuevo')
+        self.assertEqual(self.builder.get_object('file_open_menu_item').get_child().get_text(), 'Abrir')
+        self.assertEqual(self.builder.get_object('file_save_menu_item').get_child().get_text(), 'Guardar')
+        self.assertEqual(self.builder.get_object('file_save_as_menu_item').get_child().get_text(), 'Guardar como')
+        self.assertEqual(self.builder.get_object('file_quit_menu_item').get_child().get_text(), 'Salir')
+
+    def test_menu2_items(self):
+        self.assertEqual(self.builder.get_object('imagemenuitem6').get_child().get_text(), 'Cortar')
+        self.assertEqual(self.builder.get_object('imagemenuitem7').get_child().get_text(), 'Copiar')
+        self.assertEqual(self.builder.get_object('imagemenuitem8').get_child().get_text(), 'Pegar')
+        self.assertEqual(self.builder.get_object('imagemenuitem9').get_child().get_text(), 'Eliminar')
+
+    def test_menu3_items(self):
+        self.assertEqual(self.builder.get_object('help_about_menu_item').get_child().get_text(), 'Acerca de')
 
 def get_suite():
     loader = unittest.TestLoader()
